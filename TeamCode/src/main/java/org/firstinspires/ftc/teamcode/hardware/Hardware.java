@@ -39,7 +39,9 @@ public class Hardware {
     }
 
     public void init(HardwareMap ahwMap){
+
         hwMap = ahwMap;
+        
         motorFl = hwMap.get(DcMotorEx.class, "motorFl");
         motorBl = hwMap.get(DcMotorEx.class, "motorBl");
         motorBr = hwMap.get(DcMotorEx.class, "motorBr");

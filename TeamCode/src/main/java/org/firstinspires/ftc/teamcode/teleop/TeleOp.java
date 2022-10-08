@@ -3,18 +3,15 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 import org.firstinspires.ftc.teamcode.constant;
 
 
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="PurePursuit_TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="Infinity_TeleOp")
 
 public class TeleOp extends LinearOpMode {
 
@@ -92,21 +89,14 @@ public class TeleOp extends LinearOpMode {
             if (gamepad2.dpad_down) {
                 Hardware.slider.setPower(0.0);
                 Hardware.slider.setPower(constant.lowerSlider);
-                Hardware.slider.setTargetPosition(constant.low);
-                Hardware.slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Hardware.slider.setPower(constant.lowerSlider);
             }
-            if (gamepad2.dpad_right){
-                Hardware.slider.setTargetPosition(constant.low);
+            if (gamepad2.left_bumper){
+                Hardware.slider.setTargetPosition(constant.collectIn);
                 Hardware.slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 if (Hardware.slider.getCurrentPosition() >= Hardware.slider.getTargetPosition())
                     Hardware.slider.setPower(constant.lowerSlider);
                 else if (Hardware.slider.getCurrentPosition() <= Hardware.slider.getTargetPosition())
                     Hardware.slider.setPower(constant.raiseSlider);
-            }
-            if (gamepad2.left_bumper) {
-                Hardware.slider.setPower(0.0);
-                Hardware.slider.setPower(constant.lowerSlider);
             }
 
             if (Hardware.slider.getPower() < 0.0 && Hardware.limitSwitch.getState()) {
@@ -136,10 +126,43 @@ public class TeleOp extends LinearOpMode {
                 sleep(200);
             }
 
-            if (Hardware.inside.getDistance(DistanceUnit.CM) < 3 && gamepad2.b){
+            //arm
 
-
+            if (Hardware.inside.getDistance(DistanceUnit.CM) < 3 && gamepad2.b && Hardware.inOut.getPosition()==constant.in){
+                Hardware.inOut.setPosition(constant.out);
+                sleep(200);
+                Hardware.rotate.setPosition(constant.down);
             }
+            else if (Hardware.inside.getDistance(DistanceUnit.CM) > 3 && gamepad2.b && Hardware.inOut.getPosition()==constant.in){
+                Hardware.inOut.setPosition(constant.out);
+                sleep(200);
+                Hardware.rotate.setPosition(constant.up);
+            }
+            else if (Hardware.inOut.getPosition() == constant.out && gamepad2.b){
+                Hardware.inOut.setPosition(constant.in);
+                sleep(200);
+            }
+
+            if (Hardware.rotate.getPosition() == constant.up && gamepad2.x){
+                Hardware.rotate.setPosition(constant.down);
+                sleep(200);
+            }
+            else if (Hardware.rotate.getPosition() == constant.up && gamepad2.x){
+                Hardware.rotate.setPosition(constant.down);
+                sleep(200);
+            }
+
+            //intake
+
+            if (gamepad2.right_trigger > 0.0)
+                Hardware.intake.setPower(constant.intakeOn);
+            else if (gamepad2.left_trigger > 0.0)
+                Hardware.intake.setPower(-constant.intakeOn);
+            else Hardware.intake.setPower(constant.intakeOff);
+
+            if (Hardware.outside.getDistance(DistanceUnit.CM) < 9)
+                Hardware.ledBand.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+            else Hardware.ledBand.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
 
 
             telemetry.addData("Lift:", Hardware.slider.getCurrentPosition());

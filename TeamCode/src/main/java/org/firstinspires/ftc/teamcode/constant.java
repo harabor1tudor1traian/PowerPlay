@@ -20,5 +20,9 @@ public class constant {
     public static final int low = 0;
     public static final int bottom = 0;
     public static final int collect = 0;
+    public static final int collectIn = 0;
+
+    public static final double intakeOn = 1.0;
+    public static final double intakeOff = 0.0;
 
 }

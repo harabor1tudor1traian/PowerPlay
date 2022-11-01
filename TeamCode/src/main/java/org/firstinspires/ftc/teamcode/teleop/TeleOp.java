@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.constant;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="Infinity_TeleOp")
-
+@Disabled
 public class TeleOp extends LinearOpMode {
 
     Hardware robot = new Hardware();
@@ -29,9 +30,6 @@ public class TeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
-
-
         robot.init(hardwareMap);
 
         waitForStart();
@@ -137,7 +135,7 @@ public class TeleOp extends LinearOpMode {
                 Hardware.inOut.setPosition(constant.out);
                 sleep(200);
                 Hardware.rotate.setPosition(constant.up);
-            }
+                }
             else if (Hardware.inOut.getPosition() == constant.out && gamepad2.b){
                 Hardware.inOut.setPosition(constant.in);
                 sleep(200);

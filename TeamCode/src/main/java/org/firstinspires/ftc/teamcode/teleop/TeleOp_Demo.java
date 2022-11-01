@@ -106,6 +106,7 @@ public class TeleOp_Demo extends LinearOpMode {
                 manual = false;
             }
             if (gamepad2.dpad_down) {
+                Hardware_Demo.slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Hardware_Demo.slider.setPower(0.0);
                 Hardware_Demo.slider.setPower(constant.lowerSlider);
                 manual = false;
@@ -117,19 +118,21 @@ public class TeleOp_Demo extends LinearOpMode {
                 Hardware_Demo.slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 Hardware_Demo.slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-            if (Hardware_Demo.slider.getCurrentPosition() < Hardware_Demo.slider.getTargetPosition() && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())>10 && Hardware_Demo.slider.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
+            if (Hardware_Demo.slider.getCurrentPosition() < Hardware_Demo.slider.getTargetPosition() && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())<10 && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())>1 && Hardware_Demo.slider.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
                 Hardware_Demo.slider.setPower(constant.stopSlider);
             }
-            else if (Hardware_Demo.slider.getCurrentPosition() > Hardware_Demo.slider.getTargetPosition() && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())>10 && Hardware_Demo.slider.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
+            else if (Hardware_Demo.slider.getCurrentPosition() > Hardware_Demo.slider.getTargetPosition() && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())<10 && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())>1 && Hardware_Demo.slider.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
                 Hardware_Demo.slider.setPower(-constant.stopSlider);
             }
 
             if (-gamepad2.left_stick_y > 0) {
+                Hardware_Demo.slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Hardware_Demo.slider.setPower(-gamepad2.left_stick_y);
                 manual = true;
             }
             else if (-gamepad2.left_stick_y < 0) {
-                Hardware_Demo.slider.setPower(gamepad2.left_stick_y);
+                Hardware_Demo.slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Hardware_Demo.slider.setPower(-gamepad2.left_stick_y);
                 manual = true;
             }
             else if (Hardware_Demo.limitSwitch.getState() && manual) Hardware_Demo.slider.setPower(constant.stopSlider);

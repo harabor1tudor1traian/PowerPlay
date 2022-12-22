@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.demoBot;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,9 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.constant;
-import org.firstinspires.ftc.teamcode.hardware.Hardware_Demo;
 import org.firstinspires.ftc.teamcode.vision.ElementDetection;
 
 @Autonomous(name="Autonomous_Right", group="Blue_encoder")
@@ -55,7 +53,7 @@ public class Auto_Demo extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        voltage = Hardware_Demo.expansionHub.getInputVoltage(VoltageUnit.VOLTS);
+        //voltage = Hardware_Demo.expansionHub.getInputVoltage(VoltageUnit.VOLTS);
 
 
         /*detectionTime.reset();
@@ -68,7 +66,7 @@ public class Auto_Demo extends LinearOpMode {
                 level = 3;
             else level = 2;
         }*/
-        driveForward(100,0,0);
+        driveForward(120,0,0);
         telemetry.addData("Path", "Complete");
         telemetry.addData("Randomisation:", level);
         telemetry.update();

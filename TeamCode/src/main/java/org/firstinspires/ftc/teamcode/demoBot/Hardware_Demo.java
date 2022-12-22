@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware;
+package org.firstinspires.ftc.teamcode.demoBot;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -20,13 +20,12 @@ public class Hardware_Demo {
     public static DcMotorEx motorBr;
     public static DcMotorEx motorFr;
     public static DcMotorEx slider;
-    public static Servo bormasina;
 
     public static Servo claw;
 
-    public static Servo knife;
+    //public static Servo angle;
 
-    public static LynxModule expansionHub;
+    //public static LynxModule expansionHub;
 
     public static DigitalChannel limitSwitch;
     HardwareMap hwMap = null;
@@ -70,17 +69,12 @@ public class Hardware_Demo {
         slider.setDirection(DcMotorSimple.Direction.FORWARD);
 
         claw = hwMap.get(Servo.class, "claw");
+        //angle = hwMap.get(Servo.class, "angle");
 
-        claw.setPosition(constant.closedClaw);
-
-        knife = hwMap.get(Servo.class, "knife");
-        knife.setPosition(constant.knifeLeft);
+        //claw.setPosition(constant.closedClaw);
+        //angle.setPosition(constant.collectAngle);
 
         limitSwitch = hwMap.get(DigitalChannel.class, "limitSwitch");
-
-        expansionHub = hwMap.get(LynxModule.class, "Expansion Hub 3");
-        bormasina = hwMap.get(Servo.class, " bormasina");
-        bormasina.setPosition(constant.off);
 
     }
 }

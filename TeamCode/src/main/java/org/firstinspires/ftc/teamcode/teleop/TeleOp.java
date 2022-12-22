@@ -32,7 +32,7 @@ public class TeleOp extends LinearOpMode {
     double Turn = 0;
     double Slide = 0;
     double max;
-    double leftPos = 0.5, rightPos = 0.5;
+    double leftPos = constant.leftArmCollect, rightPos = constant.rightArmCollect;
 
     double brake = 1.0;
     double slowButton = 1.0;
@@ -111,6 +111,11 @@ public class TeleOp extends LinearOpMode {
                 Hardware.rotateClaw.setPosition(constant.upsideDownCone);
                 rotateDelay.reset();
             }
+
+            if (gamepad2.y)
+                Hardware.inOutAngle.setPosition(constant.out);
+            if (gamepad2.x)
+                Hardware.inOutAngle.setPosition(constant.in);
             
             if (-gamepad2.left_stick_y > 0.5){
                 leftPos+=0.002;
@@ -273,8 +278,8 @@ public class TeleOp extends LinearOpMode {
                 rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop);
             }
             else {
-                leftPos+=0.05*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop);
-                rightPos-=0.05*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop);
+                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop);
+                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop);
             }
         }
         else if (!drop && Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect) > 0.001){
@@ -283,8 +288,8 @@ public class TeleOp extends LinearOpMode {
                 rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
             }
             else {
-                leftPos+=0.05*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
-                rightPos-=0.05*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
+                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
+                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
             }
         }
         else preset = false;

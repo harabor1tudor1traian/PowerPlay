@@ -33,7 +33,7 @@ public class Hardware {
     public static Servo rotateClaw;
     public static Servo leftArm;
     public static Servo rightArm;
-    //public static Servo inOutAngle;
+    public static Servo inOutAngle;
     /*public static Servo intake;
 
 
@@ -100,17 +100,17 @@ public class Hardware {
         mainClaw   = hwMap.get(Servo.class, "mainClaw");
         rotateClaw = hwMap.get(Servo.class, "rotateClaw");
         leftArm = hwMap.get(Servo.class, "leftArm");
-        rightArm = hwMap.get(Servo.class, "rightArm");/*
-        inOutAngle = hwMap.get(Servo.class, "inOutAngle");
+        rightArm = hwMap.get(Servo.class, "rightArm");
+        inOutAngle = hwMap.get(Servo.class, "inOutAngle");/*
         intakeClaw = hwMap.get(Servo.class, "intakeClaw");
         moveIntake = hwMap.get(Servo.class, "moveIntake");
         intake     = hwMap.get(Servo.class, "intake");
 */
         mainClaw  .setPosition(constant.closedClaw);
         rotateClaw.setPosition(constant.verticalCone);
-        leftArm.setPosition(constant.leftArmMid);
-        rightArm.setPosition(constant.rightArmMid);
-        /*inOutAngle.setPosition(constant.in);
+        leftArm.setPosition(constant.leftArmCollect);
+        rightArm.setPosition(constant.rightArmCollect);
+        inOutAngle.setPosition(constant.in);/*
         intakeClaw.setPosition(constant.openIntake);
         moveIntake.setPosition(constant.intakeCollect);
         intake    .setPosition(constant.intakeStart);

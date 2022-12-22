@@ -27,9 +27,9 @@ public class constant {
 
     public static final double intakeStart = 0.0;
 
-    public static final double dropAngle = 0.0;
+    public static final double dropAngle = 0.6;
     public static final double in = 1.0;
-    public static final double out = 0.0;
+    public static final double out = 0.35;
 
     public static final double up = 1.0;
     public static final double down = 0.0;

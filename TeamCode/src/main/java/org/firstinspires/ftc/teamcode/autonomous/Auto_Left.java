@@ -196,6 +196,7 @@ public class Auto_Left extends LinearOpMode {
             telemetry.addData("ParkZone:", parkZone);
             telemetry.addData("Stage:", programstage);
             telemetry.update();
+            drive.update();
             switch (robotStageValues[programstage]){
                 case scan:
                     while (!tagFound && detectionTime.seconds() > 0.2) {

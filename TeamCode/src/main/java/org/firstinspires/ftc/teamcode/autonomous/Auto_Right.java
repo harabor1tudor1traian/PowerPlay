@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous(name="Auto_Right", group="Roadrunner")
-public class Auto_RIght extends LinearOpMode {
+public class Auto_Right extends LinearOpMode {
 
     private enum robotStage{
         scan,
@@ -196,6 +196,7 @@ public class Auto_RIght extends LinearOpMode {
             telemetry.addData("ParkZone:", parkZone);
             telemetry.addData("Stage:", programstage);
             telemetry.update();
+            drive.update();
             switch (robotStageValues[programstage]){
                 case scan:
                     while (!tagFound && detectionTime.seconds() > 0.2) {
@@ -222,7 +223,7 @@ public class Auto_RIght extends LinearOpMode {
                             }
                         }
                     }
-                    if (parkZone == 1){
+                    if (parkZone == 3){
                         park = drive.trajectoryBuilder(new Pose2d())
                                 .splineTo(new Vector2d(150,-30), Math.toRadians(180))
                                 .build();

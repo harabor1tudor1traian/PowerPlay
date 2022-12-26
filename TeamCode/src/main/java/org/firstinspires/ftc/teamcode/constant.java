@@ -5,15 +5,20 @@ public class constant {
     public static final double openClaw = 0.6;
     public static final double closedClaw = 1.0;
 
-    public static final double leftArmMid = 0.5;
+    public static final double leftArmCone1 = 0.5;
+    public static final double leftArmCone2 = 0.5;
+    public static final double leftArmCone3 = 0.5;
+    public static final double leftArmCone4 = 0.5;
+    public static final double leftArmCone5 = 0.5;
     public static final double rightArmMid = 0.5;
     public static final double leftArmDrop = 0.63;
     public static final double rightArmDrop = 0.37;
-    public static final double leftArmCollect = 0.142;
+    public static final double leftArmDropBack = 1.0;
+    public static final double rightArmDropBack = 0.0;
+    public static final double leftArmCollect = 0.14;
     public static final double rightArmCollect = 0.86;
+    public static final double angleUsageThreshold = 0.45;
 
-    public static final double upStep = 0.03;
-    public static final double downStep = 0.01;
 
     public static final double openIntake = 0.42;
     public static final double closedIntake = 0.65;
@@ -27,7 +32,7 @@ public class constant {
 
     public static final double intakeStart = 0.0;
 
-    public static final double dropAngle = 0.6;
+    public static final double dropAngle = 0.55;
     public static final double in = 1.0;
     public static final double out = 0.35;
 

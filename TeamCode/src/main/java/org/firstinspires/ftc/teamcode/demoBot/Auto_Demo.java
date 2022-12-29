@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.constant;
+import org.firstinspires.ftc.teamcode.Constant;
 import org.firstinspires.ftc.teamcode.vision.ElementDetection;
 
 @Autonomous(name="Autonomous_Right", group="Blue_encoder")
@@ -16,7 +16,7 @@ public class Auto_Demo extends LinearOpMode {
     Hardware_Demo robot = new Hardware_Demo();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime detectionTime = new ElapsedTime();
-    private constant ct = new constant();
+    private Constant ct = new Constant();
     private int level = 2;
     private boolean firsttime = true;
     private int distanceBack = 0;
@@ -77,10 +77,10 @@ public class Auto_Demo extends LinearOpMode {
         if (opModeIsActive()) {
             int flTarget, blTarget, brTarget, frTarget;
             firsttime = true;
-            flTarget = robot.motorFl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            flTarget = robot.motorFl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -93,7 +93,7 @@ public class Auto_Demo extends LinearOpMode {
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
-            for (int i = 10; i <= constant.maxVelocityDrivetrain; i+=10) {
+            for (int i = 10; i <= Constant.maxVelocityDrivetrain; i+=10) {
                 robot.motorFl.setVelocity(i+leftDif, AngleUnit.DEGREES);
                 robot.motorBl.setVelocity(i+leftDif, AngleUnit.DEGREES);
                 robot.motorBr.setVelocity(i+rightDif, AngleUnit.DEGREES);
@@ -108,7 +108,7 @@ public class Auto_Demo extends LinearOpMode {
                         robot.motorBr.getCurrentPosition(),
                         robot.motorFr.getCurrentPosition());
                 telemetry.update();
-                if (((Hardware_Demo.motorFl.getCurrentPosition()/constant.ticksPerRev*constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/constant.ticksPerRev*constant.wheelDiameter*3.1415)>5)
+                if (((Hardware_Demo.motorFl.getCurrentPosition()/ Constant.ticksPerRev* Constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/ Constant.ticksPerRev* Constant.wheelDiameter*3.1415)>5)
                     break;
                /* if (((Math.abs(robot.motorFl.getCurrentPosition() - robot.motorFl.getTargetPosition()) < (ct.ticksPerRev * 5) / (ct.wheelDiameter * 3.1415))
                          || (Math.abs(robot.motorBl.getCurrentPosition() - robot.motorBl.getTargetPosition()) < (ct.ticksPerRev * 5) / (ct.wheelDiameter * 3.1415))
@@ -148,10 +148,10 @@ public class Auto_Demo extends LinearOpMode {
         if (opModeIsActive()) {
             int flTarget, blTarget, brTarget, frTarget;
             firsttime=true;
-            flTarget = robot.motorFl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            flTarget = robot.motorFl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -163,7 +163,7 @@ public class Auto_Demo extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            for (int i = 10; i <= constant.maxVelocityDrivetrain; i+=10) {
+            for (int i = 10; i <= Constant.maxVelocityDrivetrain; i+=10) {
                 robot.motorFl.setVelocity(-i-leftDif, AngleUnit.DEGREES);
                 robot.motorBl.setVelocity(-i-leftDif, AngleUnit.DEGREES);
                 robot.motorBr.setVelocity(-i-rightDif, AngleUnit.DEGREES);
@@ -178,7 +178,7 @@ public class Auto_Demo extends LinearOpMode {
                         robot.motorBr.getCurrentPosition(),
                         robot.motorFr.getCurrentPosition());
                 telemetry.update();
-                if (((Hardware_Demo.motorFl.getCurrentPosition()/constant.ticksPerRev*constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/constant.ticksPerRev*constant.wheelDiameter*3.1415)>5)
+                if (((Hardware_Demo.motorFl.getCurrentPosition()/ Constant.ticksPerRev* Constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/ Constant.ticksPerRev* Constant.wheelDiameter*3.1415)>5)
                     break;
             }
             robot.motorFl.setVelocity(0, AngleUnit.DEGREES);
@@ -203,10 +203,10 @@ public class Auto_Demo extends LinearOpMode {
         if (opModeIsActive()) {
             int flTarget, blTarget, brTarget, frTarget;
             firsttime = true;
-            flTarget = robot.motorFl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            flTarget = robot.motorFl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -218,7 +218,7 @@ public class Auto_Demo extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            for (int i = 10; i <= constant.maxVelocityDrivetrain; i+=10) {
+            for (int i = 10; i <= Constant.maxVelocityDrivetrain; i+=10) {
                 robot.motorFl.setVelocity(i, AngleUnit.DEGREES);
                 robot.motorBl.setVelocity(-i, AngleUnit.DEGREES);
                 robot.motorBr.setVelocity(i, AngleUnit.DEGREES);
@@ -234,7 +234,7 @@ public class Auto_Demo extends LinearOpMode {
                         robot.motorBr.getCurrentPosition(),
                         robot.motorFr.getCurrentPosition());
                 telemetry.update();
-                if (((Hardware_Demo.motorFl.getCurrentPosition()/constant.ticksPerRev*constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/constant.ticksPerRev*constant.wheelDiameter*3.1415)>5)
+                if (((Hardware_Demo.motorFl.getCurrentPosition()/ Constant.ticksPerRev* Constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/ Constant.ticksPerRev* Constant.wheelDiameter*3.1415)>5)
                     break;
             }
 
@@ -262,10 +262,10 @@ public class Auto_Demo extends LinearOpMode {
         if (opModeIsActive()) {
             int flTarget, blTarget, brTarget, frTarget;
             firsttime = true;
-            flTarget = robot.motorFl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            flTarget = robot.motorFl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -277,7 +277,7 @@ public class Auto_Demo extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            for (int i = 10; i <= constant.maxVelocityDrivetrain; i+=10) {
+            for (int i = 10; i <= Constant.maxVelocityDrivetrain; i+=10) {
                 robot.motorFl.setVelocity(-i, AngleUnit.DEGREES);
                 robot.motorBl.setVelocity(i, AngleUnit.DEGREES);
                 robot.motorBr.setVelocity(-i, AngleUnit.DEGREES);
@@ -292,7 +292,7 @@ public class Auto_Demo extends LinearOpMode {
                         robot.motorBr.getCurrentPosition(),
                         robot.motorFr.getCurrentPosition());
                 telemetry.update();
-                if (((Hardware_Demo.motorFl.getCurrentPosition()/constant.ticksPerRev*constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/constant.ticksPerRev*constant.wheelDiameter*3.1415)>5)
+                if (((Hardware_Demo.motorFl.getCurrentPosition()/ Constant.ticksPerRev* Constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/ Constant.ticksPerRev* Constant.wheelDiameter*3.1415)>5)
                     break;
                 /*if (((Math.abs(robot.motorFl.getCurrentPosition() - robot.motorFl.getTargetPosition()) < (constant.ticksPerRev * 5) / (constant.wheelDiameter * 3.1415))
                          || (Math.abs(robot.motorBl.getCurrentPosition() - robot.motorBl.getTargetPosition()) < (constant.ticksPerRev * 5) / (constant.wheelDiameter * 3.1415))
@@ -329,11 +329,11 @@ public class Auto_Demo extends LinearOpMode {
     public void rotateRight(int degrees){
         if (opModeIsActive()){
             int flTarget, blTarget, brTarget, frTarget;
-            int distance = (int)((degrees * 2 * constant.chassis_width * 3.1415)/360);
-            flTarget = robot.motorFl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            int distance = (int)((degrees * 2 * Constant.chassis_width * 3.1415)/360);
+            flTarget = robot.motorFl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -345,10 +345,10 @@ public class Auto_Demo extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.motorFl.setVelocity(constant.maxVelocityDrivetrain);
-            robot.motorBl.setVelocity(constant.maxVelocityDrivetrain);
-            robot.motorBr.setVelocity(-constant.maxVelocityDrivetrain);
-            robot.motorFr.setVelocity(-constant.maxVelocityDrivetrain);
+            robot.motorFl.setVelocity(Constant.maxVelocityDrivetrain);
+            robot.motorBl.setVelocity(Constant.maxVelocityDrivetrain);
+            robot.motorBr.setVelocity(-Constant.maxVelocityDrivetrain);
+            robot.motorFr.setVelocity(-Constant.maxVelocityDrivetrain);
 
             while (robot.motorFl.isBusy()  || robot.motorBl.isBusy()  || robot.motorBr.isBusy()  || robot.motorFr.isBusy()) {
                 telemetry.addData("Current position: ", "%2d : %2d : %2d : %2d",
@@ -379,11 +379,11 @@ public class Auto_Demo extends LinearOpMode {
     public void rotateLeft(int degrees){
         if (opModeIsActive()){
             int flTarget, blTarget, brTarget, frTarget;
-            int distance = (int)((degrees * 2 * constant.chassis_width * 3.1415)/360);
-            flTarget = robot.motorFl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            int distance = (int)((degrees * 2 * Constant.chassis_width * 3.1415)/360);
+            flTarget = robot.motorFl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -395,10 +395,10 @@ public class Auto_Demo extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.motorFl.setVelocity(-constant.maxVelocityDrivetrain);
-            robot.motorBl.setVelocity(-constant.maxVelocityDrivetrain);
-            robot.motorBr.setVelocity(constant.maxVelocityDrivetrain);
-            robot.motorFr.setVelocity(constant.maxVelocityDrivetrain);
+            robot.motorFl.setVelocity(-Constant.maxVelocityDrivetrain);
+            robot.motorBl.setVelocity(-Constant.maxVelocityDrivetrain);
+            robot.motorBr.setVelocity(Constant.maxVelocityDrivetrain);
+            robot.motorFr.setVelocity(Constant.maxVelocityDrivetrain);
 
             while (robot.motorFl.isBusy()  || robot.motorBl.isBusy()  || robot.motorBr.isBusy()  || robot.motorFr.isBusy()) {
                 telemetry.addData("Current position: ", "%2d : %2d : %2d : %2d",
@@ -432,10 +432,10 @@ public class Auto_Demo extends LinearOpMode {
             robot.slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             if (position > robot.slider.getCurrentPosition()) {
                 //robot.cage.setPosition(constant.up);
-                robot.slider.setPower(constant.raiseSlider);
+                robot.slider.setPower(Constant.raiseSlider);
             }
             else
-                robot.slider.setPower(constant.lowerSlider);
+                robot.slider.setPower(Constant.lowerSlider);
             while (robot.slider.isBusy()){
                 telemetry.addData("Moving", "slider...");
                 telemetry.addData("Target position: ", "%2d", robot.slider.getTargetPosition());

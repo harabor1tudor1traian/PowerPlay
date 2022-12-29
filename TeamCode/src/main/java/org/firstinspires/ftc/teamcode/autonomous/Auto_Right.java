@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.constant;
+import org.firstinspires.ftc.teamcode.Constant;
 import org.firstinspires.ftc.teamcode.demoBot.Hardware_Demo;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.examples.AprilTagDetectionPipeline;
@@ -63,7 +63,7 @@ public class Auto_Right extends LinearOpMode {
     private ElapsedTime autoTimer = new ElapsedTime();
     private ElapsedTime cycleRuntime = new ElapsedTime();
     private ElapsedTime detectionTime = new ElapsedTime();
-    private constant ct = new constant();
+    private Constant ct = new Constant();
     private int parkZone = 2;
     boolean movingArm = false;
     boolean cycleTimer = true;
@@ -72,9 +72,9 @@ public class Auto_Right extends LinearOpMode {
     boolean tagFound = false;
     double cycleTime;
 
-    double leftPos = constant.leftArmCollect;
-    double rightPos = constant.rightArmCollect;
-    double clawPos = constant.collect;
+    double leftPos = Constant.leftArmCollect;
+    double rightPos = Constant.rightArmCollect;
+    double clawPos = Constant.collect;
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -241,36 +241,36 @@ public class Auto_Right extends LinearOpMode {
                     break;
 
                 case preLoad:
-                    moveArm(constant.leftArmDrop);
+                    moveArm(Constant.leftArmDrop);
                     drive.followTrajectoryAsync(preLoad);
                     if (drive.isBusy())
                         programstage = thisStage();
                     else {
-                        Hardware.mainClaw.setPosition(constant.openClaw);
+                        Hardware.mainClaw.setPosition(Constant.openClaw);
                         sleep(500);
                         programstage = nextStage();
                     }
                     break;
 
                 case stack1:
-                    moveArm(constant.leftArmCone1);
+                    moveArm(Constant.leftArmCone1);
                     drive.followTrajectorySequenceAsync(stack1);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
-                        Hardware.mainClaw.setPosition(constant.closedClaw);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
                         sleep(500);
                         programstage = nextStage();
                     }
                     break;
 
                 case cone1:
-                    moveArm(constant.leftArmDropBack);
+                    moveArm(Constant.leftArmDropBack);
                     drive.followTrajectoryAsync(cone1);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
-                        Hardware.mainClaw.setPosition(constant.openClaw);
+                        Hardware.mainClaw.setPosition(Constant.openClaw);
                         sleep(500);
                         programstage = nextStage();
                     }
@@ -278,46 +278,46 @@ public class Auto_Right extends LinearOpMode {
                 case stack2:
                     if (cycleTimer)
                         cycleRuntime.reset();
-                    moveArm(constant.leftArmCone2);
+                    moveArm(Constant.leftArmCone2);
                     drive.followTrajectoryAsync(stack2);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
-                        Hardware.mainClaw.setPosition(constant.closedClaw);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
                         sleep(500);
                         programstage = nextStage();
                     }
                     break;
                 case cone2:
-                    moveArm(constant.leftArmDropBack);
+                    moveArm(Constant.leftArmDropBack);
                     drive.followTrajectoryAsync(cone2);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
-                        Hardware.mainClaw.setPosition(constant.closedClaw);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
                         sleep(500);
                         programstage = nextStage();
                     }
                     break;
                 case stack3:
                     cycleTime = cycleRuntime.seconds();
-                    moveArm(constant.leftArmCone3);
+                    moveArm(Constant.leftArmCone3);
                     drive.followTrajectoryAsync(stack3);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
-                        Hardware.mainClaw.setPosition(constant.closedClaw);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
                         sleep(500);
                         programstage = nextStage();
                     }
                     break;
                 case cone3:
-                    moveArm(constant.leftArmDropBack);
+                    moveArm(Constant.leftArmDropBack);
                     drive.followTrajectoryAsync(cone3);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
-                        Hardware.mainClaw.setPosition(constant.closedClaw);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
                         sleep(500);
                         programstage = nextStage();
                     }
@@ -326,12 +326,12 @@ public class Auto_Right extends LinearOpMode {
                     if (cycleTime + 3 < 30 - autoTimer.seconds() && !cycle4)
                         cycle4 = true;
                     if (cycle4){
-                        moveArm(constant.leftArmCone4);
+                        moveArm(Constant.leftArmCone4);
                         drive.followTrajectoryAsync(stack4);
                         if (drive.isBusy() || movingArm)
                             programstage = thisStage();
                         else {
-                            Hardware.mainClaw.setPosition(constant.closedClaw);
+                            Hardware.mainClaw.setPosition(Constant.closedClaw);
                             sleep(500);
                             programstage = nextStage();
                         }
@@ -343,12 +343,12 @@ public class Auto_Right extends LinearOpMode {
                     }
                 case cone4:
                     if (cycle4) {
-                        moveArm(constant.leftArmDropBack);
+                        moveArm(Constant.leftArmDropBack);
                         drive.followTrajectoryAsync(cone4);
                         if (drive.isBusy() || movingArm)
                             programstage = thisStage();
                         else {
-                            Hardware.mainClaw.setPosition(constant.closedClaw);
+                            Hardware.mainClaw.setPosition(Constant.closedClaw);
                             sleep(500);
                             programstage = nextStage();
                         }
@@ -362,12 +362,12 @@ public class Auto_Right extends LinearOpMode {
                     if (cycleTime + 3 < 30 - autoTimer.seconds() && !cycle5)
                         cycle5 = true;
                     if (cycle5) {
-                        moveArm(constant.leftArmCone5);
+                        moveArm(Constant.leftArmCone5);
                         drive.followTrajectoryAsync(stack5);
                         if (drive.isBusy() || movingArm)
                             programstage = thisStage();
                         else {
-                            Hardware.mainClaw.setPosition(constant.closedClaw);
+                            Hardware.mainClaw.setPosition(Constant.closedClaw);
                             sleep(500);
                             programstage = nextStage();
                         }
@@ -379,12 +379,12 @@ public class Auto_Right extends LinearOpMode {
                     }
                 case cone5:
                     if (cycle5) {
-                        moveArm(constant.leftArmDropBack);
+                        moveArm(Constant.leftArmDropBack);
                         drive.followTrajectoryAsync(cone5);
                         if (drive.isBusy() || movingArm)
                             programstage = thisStage();
                         else {
-                            Hardware.mainClaw.setPosition(constant.closedClaw);
+                            Hardware.mainClaw.setPosition(Constant.closedClaw);
                             sleep(500);
                             programstage = nextStage();
                         }
@@ -395,7 +395,7 @@ public class Auto_Right extends LinearOpMode {
                         break;
                     }
                 case park:
-                    moveArm(constant.collect);
+                    moveArm(Constant.collect);
                     drive.followTrajectoryAsync(park);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
@@ -411,10 +411,10 @@ public class Auto_Right extends LinearOpMode {
     public void driveForward(double distance, int leftDif, int rightDif) {
         if (opModeIsActive()) {
             int flTarget, blTarget, brTarget, frTarget;
-            flTarget = robot.motorFl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            flTarget = robot.motorFl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -427,7 +427,7 @@ public class Auto_Right extends LinearOpMode {
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
-            for (int i = 10; i <= constant.maxVelocityDrivetrain; i+=10) {
+            for (int i = 10; i <= Constant.maxVelocityDrivetrain; i+=10) {
                 robot.motorFl.setVelocity(i+leftDif, AngleUnit.DEGREES);
                 robot.motorBl.setVelocity(i+leftDif, AngleUnit.DEGREES);
                 robot.motorBr.setVelocity(i+rightDif, AngleUnit.DEGREES);
@@ -442,7 +442,7 @@ public class Auto_Right extends LinearOpMode {
                         robot.motorBr.getCurrentPosition(),
                         robot.motorFr.getCurrentPosition());
                 telemetry.update();
-                if (((Hardware_Demo.motorFl.getCurrentPosition()/constant.ticksPerRev*constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/constant.ticksPerRev*constant.wheelDiameter*3.1415)>5)
+                if (((Hardware_Demo.motorFl.getCurrentPosition()/ Constant.ticksPerRev* Constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/ Constant.ticksPerRev* Constant.wheelDiameter*3.1415)>5)
                     break;
             }
 
@@ -468,10 +468,10 @@ public class Auto_Right extends LinearOpMode {
     public void driveBackward(double distance, int leftDif, int rightDif) {
         if (opModeIsActive()) {
             int flTarget, blTarget, brTarget, frTarget;
-            flTarget = robot.motorFl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            flTarget = robot.motorFl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -483,7 +483,7 @@ public class Auto_Right extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            for (int i = 10; i <= constant.maxVelocityDrivetrain; i+=10) {
+            for (int i = 10; i <= Constant.maxVelocityDrivetrain; i+=10) {
                 robot.motorFl.setVelocity(-i-leftDif, AngleUnit.DEGREES);
                 robot.motorBl.setVelocity(-i-leftDif, AngleUnit.DEGREES);
                 robot.motorBr.setVelocity(-i-rightDif, AngleUnit.DEGREES);
@@ -498,7 +498,7 @@ public class Auto_Right extends LinearOpMode {
                         robot.motorBr.getCurrentPosition(),
                         robot.motorFr.getCurrentPosition());
                 telemetry.update();
-                if (((Hardware_Demo.motorFl.getCurrentPosition()/constant.ticksPerRev*constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/constant.ticksPerRev*constant.wheelDiameter*3.1415)>5)
+                if (((Hardware_Demo.motorFl.getCurrentPosition()/ Constant.ticksPerRev* Constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/ Constant.ticksPerRev* Constant.wheelDiameter*3.1415)>5)
                     break;
             }
             robot.motorFl.setVelocity(0, AngleUnit.DEGREES);
@@ -522,10 +522,10 @@ public class Auto_Right extends LinearOpMode {
     public void slideRight(double distance) {
         if (opModeIsActive()) {
             int flTarget, blTarget, brTarget, frTarget;
-            flTarget = robot.motorFl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            flTarget = robot.motorFl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -537,7 +537,7 @@ public class Auto_Right extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            for (int i = 10; i <= constant.maxVelocityDrivetrain; i+=10) {
+            for (int i = 10; i <= Constant.maxVelocityDrivetrain; i+=10) {
                 robot.motorFl.setVelocity(i, AngleUnit.DEGREES);
                 robot.motorBl.setVelocity(-i, AngleUnit.DEGREES);
                 robot.motorBr.setVelocity(i, AngleUnit.DEGREES);
@@ -553,7 +553,7 @@ public class Auto_Right extends LinearOpMode {
                         robot.motorBr.getCurrentPosition(),
                         robot.motorFr.getCurrentPosition());
                 telemetry.update();
-                if (((Hardware_Demo.motorFl.getCurrentPosition()/constant.ticksPerRev*constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/constant.ticksPerRev*constant.wheelDiameter*3.1415)>5)
+                if (((Hardware_Demo.motorFl.getCurrentPosition()/ Constant.ticksPerRev* Constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/ Constant.ticksPerRev* Constant.wheelDiameter*3.1415)>5)
                     break;
             }
 
@@ -580,10 +580,10 @@ public class Auto_Right extends LinearOpMode {
     public void slideLeft(double distance) {
         if (opModeIsActive()) {
             int flTarget, blTarget, brTarget, frTarget;
-            flTarget = robot.motorFl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            flTarget = robot.motorFl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -595,7 +595,7 @@ public class Auto_Right extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            for (int i = 10; i <= constant.maxVelocityDrivetrain; i+=10) {
+            for (int i = 10; i <= Constant.maxVelocityDrivetrain; i+=10) {
                 robot.motorFl.setVelocity(-i, AngleUnit.DEGREES);
                 robot.motorBl.setVelocity(i, AngleUnit.DEGREES);
                 robot.motorBr.setVelocity(-i, AngleUnit.DEGREES);
@@ -610,7 +610,7 @@ public class Auto_Right extends LinearOpMode {
                         robot.motorBr.getCurrentPosition(),
                         robot.motorFr.getCurrentPosition());
                 telemetry.update();
-                if (((Hardware_Demo.motorFl.getCurrentPosition()/constant.ticksPerRev*constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/constant.ticksPerRev*constant.wheelDiameter*3.1415)>5)
+                if (((Hardware_Demo.motorFl.getCurrentPosition()/ Constant.ticksPerRev* Constant.wheelDiameter * 3.1415)-Hardware_Demo.motorFl.getTargetPosition()/ Constant.ticksPerRev* Constant.wheelDiameter*3.1415)>5)
                     break;
             }
 
@@ -634,11 +634,11 @@ public class Auto_Right extends LinearOpMode {
     public void rotateRight(int degrees){
         if (opModeIsActive()){
             int flTarget, blTarget, brTarget, frTarget;
-            int distance = (int)((degrees * 2 * constant.chassis_width * 3.1415)/360);
-            flTarget = robot.motorFl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            int distance = (int)((degrees * 2 * Constant.chassis_width * 3.1415)/360);
+            flTarget = robot.motorFl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -650,10 +650,10 @@ public class Auto_Right extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.motorFl.setVelocity(constant.maxVelocityDrivetrain);
-            robot.motorBl.setVelocity(constant.maxVelocityDrivetrain);
-            robot.motorBr.setVelocity(-constant.maxVelocityDrivetrain);
-            robot.motorFr.setVelocity(-constant.maxVelocityDrivetrain);
+            robot.motorFl.setVelocity(Constant.maxVelocityDrivetrain);
+            robot.motorBl.setVelocity(Constant.maxVelocityDrivetrain);
+            robot.motorBr.setVelocity(-Constant.maxVelocityDrivetrain);
+            robot.motorFr.setVelocity(-Constant.maxVelocityDrivetrain);
 
             while (robot.motorFl.isBusy()  || robot.motorBl.isBusy()  || robot.motorBr.isBusy()  || robot.motorFr.isBusy()) {
                 telemetry.addData("Current position: ", "%2d : %2d : %2d : %2d",
@@ -684,11 +684,11 @@ public class Auto_Right extends LinearOpMode {
     public void rotateLeft(int degrees){
         if (opModeIsActive()){
             int flTarget, blTarget, brTarget, frTarget;
-            int distance = (int)((degrees * 2 * constant.chassis_width * 3.1415)/360);
-            flTarget = robot.motorFl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            blTarget = robot.motorBl.getCurrentPosition() - (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            brTarget = robot.motorBr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
-            frTarget = robot.motorFr.getCurrentPosition() + (int) ((constant.ticksPerRev * distance) / (constant.wheelDiameter * 3.1415));
+            int distance = (int)((degrees * 2 * Constant.chassis_width * 3.1415)/360);
+            flTarget = robot.motorFl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            blTarget = robot.motorBl.getCurrentPosition() - (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            brTarget = robot.motorBr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
+            frTarget = robot.motorFr.getCurrentPosition() + (int) ((Constant.ticksPerRev * distance) / (Constant.wheelDiameter * 3.1415));
 
             robot.motorFl.setTargetPosition(flTarget);
             robot.motorBl.setTargetPosition(blTarget);
@@ -700,10 +700,10 @@ public class Auto_Right extends LinearOpMode {
             robot.motorBr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorFr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.motorFl.setVelocity(-constant.maxVelocityDrivetrain);
-            robot.motorBl.setVelocity(-constant.maxVelocityDrivetrain);
-            robot.motorBr.setVelocity(constant.maxVelocityDrivetrain);
-            robot.motorFr.setVelocity(constant.maxVelocityDrivetrain);
+            robot.motorFl.setVelocity(-Constant.maxVelocityDrivetrain);
+            robot.motorBl.setVelocity(-Constant.maxVelocityDrivetrain);
+            robot.motorBr.setVelocity(Constant.maxVelocityDrivetrain);
+            robot.motorFr.setVelocity(Constant.maxVelocityDrivetrain);
 
             while (robot.motorFl.isBusy()  || robot.motorBl.isBusy()  || robot.motorBr.isBusy()  || robot.motorFr.isBusy()) {
                 telemetry.addData("Current position: ", "%2d : %2d : %2d : %2d",
@@ -778,11 +778,11 @@ public class Auto_Right extends LinearOpMode {
         }
         else movingArm = false;
         if (position > 0.8)
-            Hardware.rotateClaw.setPosition(constant.upsideDownCone);
-        else Hardware.rotateClaw.setPosition(constant.verticalCone);
+            Hardware.rotateClaw.setPosition(Constant.upsideDownCone);
+        else Hardware.rotateClaw.setPosition(Constant.verticalCone);
         if (position > 0.45)
-            clawPos = constant.dropAngle + Math.abs(constant.leftArmCollect - position);
-        else clawPos = constant.out + Math.abs(constant.leftArmCollect - position);
+            clawPos = Constant.dropAngle + Math.abs(Constant.leftArmCollect - position);
+        else clawPos = Constant.out + Math.abs(Constant.leftArmCollect - position);
     }
 
 

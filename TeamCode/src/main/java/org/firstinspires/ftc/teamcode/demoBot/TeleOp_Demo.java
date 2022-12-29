@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.constant;
-import org.firstinspires.ftc.teamcode.demoBot.Hardware_Demo;
+import org.firstinspires.ftc.teamcode.Constant;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp_Demo", group="Demo")
@@ -78,36 +77,36 @@ public class TeleOp_Demo extends LinearOpMode {
 
             //Slider
             if (gamepad2.dpad_up) {
-                Hardware_Demo.slider.setTargetPosition(constant.high);
+                Hardware_Demo.slider.setTargetPosition(Constant.high);
                 Hardware_Demo.slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Hardware_Demo.slider.setPower(constant.raiseSlider);
+                Hardware_Demo.slider.setPower(Constant.raiseSlider);
                 manual = false;
                 manualAngle = false;
             }
             if (gamepad2.dpad_left) {
-                Hardware_Demo.slider.setTargetPosition(constant.mid);
+                Hardware_Demo.slider.setTargetPosition(Constant.mid);
                 Hardware_Demo.slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 if (Hardware_Demo.slider.getCurrentPosition() >= Hardware_Demo.slider.getTargetPosition())
-                    Hardware_Demo.slider.setPower(constant.lowerSlider);
+                    Hardware_Demo.slider.setPower(Constant.lowerSlider);
                 else if (Hardware_Demo.slider.getCurrentPosition() <= Hardware_Demo.slider.getTargetPosition())
-                    Hardware_Demo.slider.setPower(constant.raiseSlider);
+                    Hardware_Demo.slider.setPower(Constant.raiseSlider);
                 manual = false;
                 manualAngle = false;
             }
             if (gamepad2.dpad_right){
-                Hardware_Demo.slider.setTargetPosition(constant.low);
+                Hardware_Demo.slider.setTargetPosition(Constant.low);
                 Hardware_Demo.slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 if (Hardware_Demo.slider.getCurrentPosition() >= Hardware_Demo.slider.getTargetPosition())
-                    Hardware_Demo.slider.setPower(constant.lowerSlider);
+                    Hardware_Demo.slider.setPower(Constant.lowerSlider);
                 else if (Hardware_Demo.slider.getCurrentPosition() <= Hardware_Demo.slider.getTargetPosition())
-                    Hardware_Demo.slider.setPower(constant.raiseSlider);
+                    Hardware_Demo.slider.setPower(Constant.raiseSlider);
                 manual = false;
                 manualAngle = false;
             }
             if (gamepad2.dpad_down) {
                 Hardware_Demo.slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Hardware_Demo.slider.setPower(0.0);
-                Hardware_Demo.slider.setPower(constant.lowerSlider);
+                Hardware_Demo.slider.setPower(Constant.lowerSlider);
                 manual = false;
                 manualAngle = false;
             }
@@ -119,10 +118,10 @@ public class TeleOp_Demo extends LinearOpMode {
                 Hardware_Demo.slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
             if (Hardware_Demo.slider.getCurrentPosition() < Hardware_Demo.slider.getTargetPosition() && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())<10 && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())>1 && Hardware_Demo.slider.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
-                Hardware_Demo.slider.setPower(constant.stopSlider);
+                Hardware_Demo.slider.setPower(Constant.stopSlider);
             }
             else if (Hardware_Demo.slider.getCurrentPosition() > Hardware_Demo.slider.getTargetPosition() && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())<10 && Math.abs(Hardware_Demo.slider.getCurrentPosition() - Hardware_Demo.slider.getTargetPosition())>1 && Hardware_Demo.slider.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
-                Hardware_Demo.slider.setPower(-constant.stopSlider);
+                Hardware_Demo.slider.setPower(-Constant.stopSlider);
             }
 
             if (-gamepad2.left_stick_y > 0) {
@@ -135,7 +134,7 @@ public class TeleOp_Demo extends LinearOpMode {
                 Hardware_Demo.slider.setPower(-gamepad2.left_stick_y);
                 manual = true;
             }
-            else if (Hardware_Demo.limitSwitch.getState() && manual) Hardware_Demo.slider.setPower(constant.stopSlider);
+            else if (Hardware_Demo.limitSwitch.getState() && manual) Hardware_Demo.slider.setPower(Constant.stopSlider);
             else if (manual) Hardware_Demo.slider.setPower(0.0);
             //claw
             /*if (gamepad2.b){

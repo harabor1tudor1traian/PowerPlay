@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public class constant {
+public class Constant {
 
     public static final double openClaw = 0.6;
     public static final double closedClaw = 1.0;
@@ -10,6 +10,7 @@ public class constant {
     public static final double leftArmCone3 = 0.5;
     public static final double leftArmCone4 = 0.5;
     public static final double leftArmCone5 = 0.5;
+
     public static final double rightArmMid = 0.5;
     public static final double leftArmDrop = 0.63;
     public static final double rightArmDrop = 0.37;

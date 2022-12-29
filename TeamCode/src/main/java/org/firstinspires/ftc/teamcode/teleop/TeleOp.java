@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.constant;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Constant;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 
@@ -13,10 +12,11 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 public class TeleOp extends LinearOpMode {
     Hardware robot = new Hardware();
-    private ElapsedTime clawDelay = new ElapsedTime();
-    private ElapsedTime rotateDelay = new ElapsedTime();
-    private ElapsedTime cycleTime = new ElapsedTime();
-    private ElapsedTime angleTime = new ElapsedTime();
+    private final ElapsedTime clawDelay = new ElapsedTime();
+    private final ElapsedTime clawSensorDelay = new ElapsedTime();
+    private final ElapsedTime rotateDelay = new ElapsedTime();
+    private final ElapsedTime cycleTime = new ElapsedTime();
+    private final ElapsedTime angleTime = new ElapsedTime();
     double flspeed;
     double blspeed;
     double brspeed;
@@ -35,8 +35,8 @@ public class TeleOp extends LinearOpMode {
     double Turn = 0.0;
     double Slide = 0.0;
     double max = 0.0;
-    double leftPos = constant.leftArmCollect, rightPos = constant.rightArmCollect;
-    double clawPos = constant.in;
+    double leftPos = Constant.leftArmCollect, rightPos = Constant.rightArmCollect;
+    double clawPos = Constant.in;
 
     double brake = 1.0;
     double slowButton = 1.0;
@@ -100,30 +100,32 @@ public class TeleOp extends LinearOpMode {
 
             //Claw
             if (gamepad2.a  && clClaw && clawDelay.milliseconds() > 200){
-                Hardware.mainClaw.setPosition(constant.openClaw);
+                Hardware.mainClaw.setPosition(Constant.openClaw);
+                clawSensorDelay.reset();
                 clawDelay.reset();
             }
             if (gamepad2.a  && opClaw && clawDelay.milliseconds() > 200){
-                Hardware.mainClaw.setPosition(constant.closedClaw);
+                Hardware.mainClaw.setPosition(Constant.closedClaw);
+                clawSensorDelay.reset();
                 clawDelay.reset();
             }
 
 
             if (gamepad2.b && upsideDown && rotateDelay.milliseconds() > 200){
-                Hardware.rotateClaw.setPosition(constant.verticalCone);
+                Hardware.rotateClaw.setPosition(Constant.verticalCone);
                 rotateDelay.reset();
             }
             if (gamepad2.b && vertical && rotateDelay.milliseconds() > 200){
-                Hardware.rotateClaw.setPosition(constant.upsideDownCone);
+                Hardware.rotateClaw.setPosition(Constant.upsideDownCone);
                 rotateDelay.reset();
             }
 
             if (gamepad2.x && !in && angleTime.milliseconds() > 200 && !preset) {
-                clawPos = constant.in;
+                clawPos = Constant.in;
                 angleTime.reset();
             }
             else if (gamepad2.x && in && angleTime.milliseconds() > 200 && !preset) {
-                clawPos = constant.out;
+                clawPos = Constant.out;
                 angleTime.reset();
             }
 
@@ -136,17 +138,17 @@ public class TeleOp extends LinearOpMode {
             if (-gamepad2.left_stick_y > 0.5){
                 leftPos+=0.002;
                 rightPos-=0.002;
-                if (Hardware.leftArm.getPosition() > constant.angleUsageThreshold)
-                    clawPos= constant.dropAngle - Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
-                else clawPos= constant.out - Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
+                if (Hardware.leftArm.getPosition() > Constant.angleUsageThreshold)
+                    clawPos= Constant.dropAngle - Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
+                else clawPos= Constant.out - Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
                 preset = false;
             }
             if (-gamepad2.left_stick_y < -0.5){
                 leftPos-=0.001;
                 rightPos+=0.001;
-                if (Hardware.leftArm.getPosition() > constant.angleUsageThreshold)
-                    clawPos= constant.dropAngle - Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
-                else clawPos= constant.out - Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
+                if (Hardware.leftArm.getPosition() > Constant.angleUsageThreshold)
+                    clawPos= Constant.dropAngle - Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
+                else clawPos= Constant.out - Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
                 preset = false;
             }
 
@@ -166,13 +168,16 @@ public class TeleOp extends LinearOpMode {
             if (preset) {
                 moveArm(position);
                 if (position != 1)
-                        clawPos= constant.dropAngle - Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
-                else clawPos = constant.out;
+                        clawPos= Constant.dropAngle - Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
+                else clawPos = Constant.out;
             }
 
             Hardware.leftArm.setPosition(leftPos);
             Hardware.rightArm.setPosition(rightPos);
             Hardware.inOutAngle.setPosition(clawPos);
+
+            if (Hardware.clawSensor.getDistance(DistanceUnit.CM) < 3 && clawSensorDelay.seconds() > 3.0)
+                Hardware.mainClaw.setPosition(Constant.closedClaw);
 
             //Slider
             /*if (gamepad2.dpad_up) {
@@ -269,56 +274,56 @@ public class TeleOp extends LinearOpMode {
     }*/
 
     public void checkServos(){
-        if (Math.abs(Hardware.mainClaw.getPosition() - constant.closedClaw) < 0.0001)
+        if (Math.abs(Hardware.mainClaw.getPosition() - Constant.closedClaw) < 0.0001)
             clClaw = true;
         else clClaw = false;
-        if (Math.abs(Hardware.mainClaw.getPosition() - constant.openClaw) < 0.0001)
+        if (Math.abs(Hardware.mainClaw.getPosition() - Constant.openClaw) < 0.0001)
             opClaw = true;
         else opClaw = false;
 
-        if (Math.abs(Hardware.rotateClaw.getPosition() - constant.verticalCone) < 0.0001)
+        if (Math.abs(Hardware.rotateClaw.getPosition() - Constant.verticalCone) < 0.0001)
             vertical = true;
         else vertical = false;
 
-        if (Math.abs(Hardware.rotateClaw.getPosition() - constant.upsideDownCone) < 0.0001)
+        if (Math.abs(Hardware.rotateClaw.getPosition() - Constant.upsideDownCone) < 0.0001)
             upsideDown = true;
         else upsideDown = false;
 
-        if (Math.abs(Hardware.inOutAngle.getPosition() - constant.in) < 0.0001)
+        if (Math.abs(Hardware.inOutAngle.getPosition() - Constant.in) < 0.0001)
             in = true;
         else in = false;
 
     }
 
     public void moveArm(int position){
-        if (position == 2 && Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop) > 0.001){
-            if (Hardware.leftArm.getPosition() > constant.leftArmDrop){
-                leftPos-=0.03*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop);
-                rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop);
+        if (position == 2 && Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDrop) > 0.001){
+            if (Hardware.leftArm.getPosition() > Constant.leftArmDrop){
+                leftPos-=0.03*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDrop);
+                rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDrop);
             }
             else {
-                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop);
-                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDrop);
+                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDrop);
+                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDrop);
             }
         }
-        else if (position == 1 && Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect) > 0.001){
-            if (Hardware.leftArm.getPosition() > constant.leftArmCollect){
-                leftPos-=0.03*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
-                rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
+        else if (position == 1 && Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect) > 0.001){
+            if (Hardware.leftArm.getPosition() > Constant.leftArmCollect){
+                leftPos-=0.03*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
+                rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
             }
             else {
-                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
-                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmCollect);
+                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
+                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
             }
         }
-        else if (position == 3 && Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDropBack) > 0.001){
-            if (Hardware.leftArm.getPosition() > constant.leftArmDropBack){
-                leftPos-=0.03*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDropBack);
-                rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDropBack);
+        else if (position == 3 && Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDropBack) > 0.001){
+            if (Hardware.leftArm.getPosition() > Constant.leftArmDropBack){
+                leftPos-=0.03*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDropBack);
+                rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDropBack);
             }
             else {
-                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDropBack);
-                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - constant.leftArmDropBack);
+                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDropBack);
+                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmDropBack);
             }
         }
         else preset = false;

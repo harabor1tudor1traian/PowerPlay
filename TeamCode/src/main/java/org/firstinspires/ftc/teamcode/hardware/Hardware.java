@@ -1,17 +1,12 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.constant;
-import org.firstinspires.ftc.teamcode.util.Encoder;
+import org.firstinspires.ftc.teamcode.Constant;
 
 public class Hardware {
 
@@ -34,15 +29,13 @@ public class Hardware {
     public static Servo leftArm;
     public static Servo rightArm;
     public static Servo inOutAngle;
-    /*public static Servo intake;
+    //public static Servo intake;
 
 
-    public static RevColorSensorV3 intakeSensor1;
-    public static RevColorSensorV3 intakeSensor2;
+    //public static RevColorSensorV3 intakeSensor1;
     public static RevColorSensorV3 clawSensor;
-    public static RevColorSensorV3 dropSensor;
 
-    public static RevBlinkinLedDriver ledBand;
+    /*public static RevBlinkinLedDriver ledBand;
 
     public static LynxModule expansionHub;
 
@@ -106,20 +99,18 @@ public class Hardware {
         moveIntake = hwMap.get(Servo.class, "moveIntake");
         intake     = hwMap.get(Servo.class, "intake");
 */
-        mainClaw  .setPosition(constant.closedClaw);
-        rotateClaw.setPosition(constant.verticalCone);
-        leftArm.setPosition(constant.leftArmCollect);
-        rightArm.setPosition(constant.rightArmCollect);
-        inOutAngle.setPosition(constant.in);/*
+        mainClaw  .setPosition(Constant.closedClaw);
+        rotateClaw.setPosition(Constant.verticalCone);
+        leftArm.setPosition(Constant.leftArmCollect);
+        rightArm.setPosition(Constant.rightArmCollect);
+        inOutAngle.setPosition(Constant.in);/*
         intakeClaw.setPosition(constant.openIntake);
         moveIntake.setPosition(constant.intakeCollect);
         intake    .setPosition(constant.intakeStart);
 
-        intakeSensor1 = hwMap.get(RevColorSensorV3.class, "intakeSensor1");
-        intakeSensor2 = hwMap.get(RevColorSensorV3.class, "intakeSensor2");
+        intakeSensor1 = hwMap.get(RevColorSensorV3.class, "intakeSensor1");*/
         clawSensor    = hwMap.get(RevColorSensorV3.class, "clawSensor");
-        dropSensor    = hwMap.get(RevColorSensorV3.class, "dropSensor");
-
+       /*
         ledBand = hwMap.get(RevBlinkinLedDriver.class, "ledBand");
         ledBand.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
 

@@ -11,6 +11,11 @@ public class Constant {
     public static final double leftArmCone4 = 0.5;
     public static final double leftArmCone5 = 0.5;
 
+    public static final double armDropHigh = 0.0;
+    public static final double armDropHighBack = 0.0;
+    public static final double armDropMid = 0.0;
+    public static final double armDropMidBack = 0.0;
+    public static final double armDropLow = 0.0;
     public static final double rightArmMid = 0.5;
     public static final double leftArmDrop = 0.63;
     public static final double rightArmDrop = 0.37;
@@ -44,7 +49,9 @@ public class Constant {
     public static final double lowerSlider = -1.0;
     public static final double stopSlider = 0.003;
     public static final int high = 1380;
+    public static final int highBack = 1380;
     public static final int mid = 990;
+    public static final int midBack = 990;
     public static final int low = 626;
     public static final int bottom = 0;
     public static final int collect = 0;

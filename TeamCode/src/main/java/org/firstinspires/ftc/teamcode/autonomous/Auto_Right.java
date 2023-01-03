@@ -93,9 +93,9 @@ public class Auto_Right extends LinearOpMode {
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int id1 = 1;
-    int id2 = 2;
-    int id3 = 3;
+    int id1 = 13;
+    int id2 = 19;
+    int id3 = 12;
 
     AprilTagDetection tagOfInterest = null;
 

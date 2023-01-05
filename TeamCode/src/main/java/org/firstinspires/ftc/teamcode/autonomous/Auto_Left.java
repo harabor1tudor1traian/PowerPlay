@@ -91,7 +91,7 @@ public class Auto_Left extends LinearOpMode {
     double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagsize = 0.166;
+    double tagsize = 0.45;
 
     int id1 = 13;
     int id2 = 19;
@@ -180,7 +180,6 @@ public class Auto_Left extends LinearOpMode {
         cone5 = drive.trajectoryBuilder(new Pose2d(), true)
                 .splineTo(new Vector2d(-81,-39), Math.toRadians(135))
                 .build();
-        ElementDetection detectElement = new ElementDetection(hardwareMap, telemetry);
 
         telemetry.addData("Path0", "Starting at %7d :%7d :%7d :%7d",
                 robot.motorFl.getCurrentPosition(),
@@ -238,82 +237,82 @@ public class Auto_Left extends LinearOpMode {
                                 .splineTo(new Vector2d(-30, -30), Math.toRadians(90))
                                 .build();
                     programstage = nextStage();
+                    drive.followTrajectoryAsync(preLoad);
                     break;
 
                 case preLoad:
                     moveArm(Constant.leftArmDrop);
-                    drive.followTrajectoryAsync(preLoad);
                     if (drive.isBusy())
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.openClaw);
                         sleep(500);
                         programstage = nextStage();
+                        drive.followTrajectorySequenceAsync(stack1);
                     }
                     break;
 
                 case stack1:
                     moveArm(Constant.leftArmCone1);
-                    drive.followTrajectorySequenceAsync(stack1);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.closedClaw);
                         sleep(500);
                         programstage = nextStage();
+                        drive.followTrajectoryAsync(cone1);
                     }
                     break;
 
                 case cone1:
                     moveArm(Constant.leftArmDropBack);
-                    drive.followTrajectoryAsync(cone1);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.openClaw);
                         sleep(500);
                         programstage = nextStage();
+                        drive.followTrajectoryAsync(stack2);
                     }
                     break;
                 case stack2:
                     if (cycleTimer)
                         cycleRuntime.reset();
                     moveArm(Constant.leftArmCone2);
-                    drive.followTrajectoryAsync(stack2);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.closedClaw);
                         sleep(500);
                         programstage = nextStage();
+                        drive.followTrajectoryAsync(cone2);
                     }
                     break;
                 case cone2:
                     moveArm(Constant.leftArmDropBack);
-                    drive.followTrajectoryAsync(cone2);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.openClaw);
                         sleep(500);
                         programstage = nextStage();
+                        drive.followTrajectoryAsync(stack3);
                     }
                     break;
                 case stack3:
                     cycleTime = cycleRuntime.seconds();
                     moveArm(Constant.leftArmCone3);
-                    drive.followTrajectoryAsync(stack3);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.closedClaw);
                         sleep(500);
                         programstage = nextStage();
+                        drive.followTrajectoryAsync(cone3);
                     }
                     break;
                 case cone3:
                     moveArm(Constant.leftArmDropBack);
-                    drive.followTrajectoryAsync(cone3);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else {
@@ -323,17 +322,19 @@ public class Auto_Left extends LinearOpMode {
                     }
                     break;
                 case stack4:
-                    if (cycleTime + 3 < 30 - autoTimer.seconds() && !cycle4)
+                    if (cycleTime + 3 < 30 - autoTimer.seconds() && !cycle4) {
                         cycle4 = true;
+                        drive.followTrajectoryAsync(stack4);
+                    }
                     if (cycle4){
                         moveArm(Constant.leftArmCone4);
-                        drive.followTrajectoryAsync(stack4);
                         if (drive.isBusy() || movingArm)
                             programstage = thisStage();
                         else {
                             Hardware.mainClaw.setPosition(Constant.closedClaw);
                             sleep(500);
                             programstage = nextStage();
+                            drive.followTrajectoryAsync(cone4);
                         }
                         break;
                     }
@@ -344,7 +345,6 @@ public class Auto_Left extends LinearOpMode {
                 case cone4:
                     if (cycle4) {
                         moveArm(Constant.leftArmDropBack);
-                        drive.followTrajectoryAsync(cone4);
                         if (drive.isBusy() || movingArm)
                             programstage = thisStage();
                         else {
@@ -359,17 +359,19 @@ public class Auto_Left extends LinearOpMode {
                         break;
                     }
                 case stack5:
-                    if (cycleTime + 3 < 30 - autoTimer.seconds() && !cycle5)
+                    if (cycleTime + 3 < 30 - autoTimer.seconds() && !cycle5) {
                         cycle5 = true;
-                    if (cycle5) {
-                        moveArm(Constant.leftArmCone5);
                         drive.followTrajectoryAsync(stack5);
+                    }
+                        if (cycle5) {
+                        moveArm(Constant.leftArmCone5);
                         if (drive.isBusy() || movingArm)
                             programstage = thisStage();
                         else {
                             Hardware.mainClaw.setPosition(Constant.closedClaw);
                             sleep(500);
                             programstage = nextStage();
+                            drive.followTrajectoryAsync(cone5);
                         }
                         break;
                     }
@@ -380,23 +382,23 @@ public class Auto_Left extends LinearOpMode {
                 case cone5:
                     if (cycle5) {
                         moveArm(Constant.leftArmDropBack);
-                        drive.followTrajectoryAsync(cone5);
                         if (drive.isBusy() || movingArm)
                             programstage = thisStage();
                         else {
                             Hardware.mainClaw.setPosition(Constant.openClaw);
                             sleep(500);
                             programstage = nextStage();
+                            drive.followTrajectoryAsync(park);
                         }
                         break;
                     }
                     else {
                         programstage = nextStage();
+                        drive.followTrajectoryAsync(park);
                         break;
                     }
                 case park:
                     moveArm(Constant.collect);
-                    drive.followTrajectoryAsync(park);
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else programstage = nextStage();

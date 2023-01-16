@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -20,6 +22,8 @@ public class TeleOp_Blue extends LinearOpMode {
     private final ElapsedTime angleTime = new ElapsedTime();
     private final ElapsedTime changeSideTime = new ElapsedTime();
     private final ElapsedTime matchTime = new ElapsedTime();
+    private final ElapsedTime intakeClawTime = new ElapsedTime();
+    private final ElapsedTime intakeDownTime = new ElapsedTime();
     double flspeed;
     double blspeed;
     double brspeed;
@@ -30,23 +34,28 @@ public class TeleOp_Blue extends LinearOpMode {
     boolean vertical = false;
     boolean upsideDown = false;
     boolean in = false;
-    boolean movingArm = false;
-    boolean back = true;
     boolean vibrate1 = true;
     boolean vibrate2 = true;
     boolean vibrate3 = true;
-
-    double position = 0.0;
+    boolean lowering = false;
+    boolean rotate = false;
+    boolean down = false;
+    boolean closed = false;
+    boolean manual = false;
+    boolean preset = false;
 
     double Drive = 0.0;
     double Turn = 0.0;
     double Slide = 0.0;
     double max = 0.0;
+    double slowButton = 0.0;
     double leftPos = Constant.leftArmCollect, rightPos = Constant.rightArmCollect;
     double clawPos = Constant.in;
+    double intakePos = Constant.intakeIn;
+    double intakeClawPos = Constant.intakeInit;
+    double intakeTarget = Constant.intakeIn;
 
     double brake = 1.0;
-
 
     @Override
     public void runOpMode() {
@@ -59,6 +68,8 @@ public class TeleOp_Blue extends LinearOpMode {
         angleTime.reset();
         changeSideTime.reset();
         matchTime.reset();
+        intakeClawTime.reset();
+        intakeDownTime.reset();
         while (opModeIsActive()) {
             checkServos();
             ///GAMEPAD 1
@@ -98,94 +109,113 @@ public class TeleOp_Blue extends LinearOpMode {
             telemetry.addData("Left:", Hardware.leftEncoder.getCurrentPosition());
             telemetry.addData("Right:", Hardware.rightEncoder.getCurrentPosition());
             telemetry.addData("Front:", Hardware.frontEncoder .getCurrentPosition());
-            telemetry.addData("Rotate:", Hardware.rotateClaw.getPosition());
             telemetry.addData("Main:", Hardware.mainClaw.getPosition());
-            telemetry.addData("leftArm", Hardware.leftArm.getPosition());
-            telemetry.addData("rightArm", Hardware.rightArm.getPosition());
+            telemetry.addData("arm", Hardware.intakeArm.getCurrentPosition());
+
+            if (gamepad1.dpad_left)
+                intakePos+=0.001;
+            if (gamepad1.dpad_right)
+                intakePos-=0.001;
+            if (gamepad1.right_bumper)
+                intakeTarget = intakePos;
+            if (gamepad1.left_bumper)
+                intakePos = intakeTarget;
+
+            if (gamepad1.dpad_down)
+                Hardware.intakeArm.setPower(0.3);
+            else if (gamepad1.dpad_up)
+                Hardware.intakeArm.setPower(-0.3);
+            else if (manual)
+                Hardware.intakeArm.setPower(0.0);
+
+            stabilizeArm();
+            encoderResetArm(Hardware.intakeArm, Hardware.limitSwitchArm);
+
+            if (gamepad1.y && intakeDownTime.seconds() > 0.2) {
+                if (!down) {
+                    intakeClawPos = Constant.intakeDown;
+                    down = true;
+                } else if (down)
+                    down = false;
+                intakeDownTime.reset();
+            }
+
+            if (down && Hardware.intakeSensor.getDistance(DistanceUnit.CM) < 2 && blue(Hardware.intakeSensor) && Hardware.intakeArm.getCurrentPosition() > Constant.angleUsageThreshold)
+                Hardware.intakeClaw.setPosition(Constant.closedIntake);
+
+            if (gamepad1.a && intakeClawTime.seconds() > 0.2) {
+                if (closed) {
+                    closed = false;
+                    Hardware.intakeClaw.setPosition(Constant.openIntake);
+                } else if (!closed) {
+                    closed = true;
+                    Hardware.intake.setPosition(Constant.closedIntake);
+                }
+                intakeClawTime.reset();
+            }
+            if (Hardware.intakeArm.getCurrentPosition() > Constant.angleUsageThreshold && !down)
+                intakeClawPos = Constant.intakeStraight - ticksToServo(Math.abs(Hardware.intakeArm.getCurrentPosition()));
+
+            Hardware.intake.setPosition(intakePos);
+            Hardware.moveIntake.setPosition(intakeClawPos);
+
 
             //GAMEPAD 2
 
             //Slider
 
-            if (gamepad2.y && changeSideTime.seconds() > 0.2){
-                back = !back;
-                changeSideTime.reset();
-            }
-
-            if (back){
-                gamepad1.setLedColor(255, 0, 4, 1000000);
-                gamepad2.setLedColor(255, 0, 4, 1000000);
-            }
-            else{
-                gamepad1.setLedColor(10, 255, 0, 1000000);
-                gamepad2.setLedColor(10, 255, 0, 1000000);
-            }
-
-            if (gamepad2.dpad_up) {
-                if (back) {
-                    moveSliders(Constant.highBack);
-                    position = Constant.armDropHigh;
-                }
-                else {
-                    moveSliders(Constant.highBack);
-                    position = Constant.armDropHighBack;
-                }
-                movingArm = true;
-            }
-            if (gamepad2.dpad_left) {
-                if (back) {
-                    moveSliders(Constant.midBack);
-                    position = Constant.armDropMidBack;
-                }
-                else {
-                    moveSliders(Constant.mid);
-                    position = Constant.armDropMid;
-                }
-                movingArm = true;
-            }
-            if (gamepad2.dpad_right){
+            if (gamepad2.dpad_up)
+                moveSliders(Constant.high);
+            if (gamepad2.dpad_left)
+                moveSliders(Constant.mid);
+            if (gamepad2.dpad_right)
                 moveSliders(Constant.low);
-                position = Constant.armDropLow;
-                movingArm = true;
-            }
             if (gamepad2.dpad_down) {
                 Hardware.slider1.setPower(0.0);
                 Hardware.slider2.setPower(0.0);
-                Hardware.slider1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                Hardware.slider2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Hardware.slider1.setPower(Constant.lowerSlider);
                 Hardware.slider2.setPower(Constant.lowerSlider);
-                position = Constant.leftArmCollect;
-                movingArm = true;
+                preset = true;
+                lowering = true;
             }
 
-            /*if (-gamepad2.left_stick_y > 0) {
+            if (lowering && Hardware.slider1.getCurrentPosition() < 100){
+                Hardware.slider1.setPower(-0.3);
+                Hardware.slider2.setPower(-0.3);
+            }
+
+            if (Hardware.slider1.getCurrentPosition() > Constant.low - 40 && !preset)
+                clawPos = Constant.dropAngle;
+            if (Hardware.slider1.getCurrentPosition() < Constant.low - 40 && !preset)
+                clawPos = Constant.out;
+
+            if (gamepad2.left_trigger > 0.0)
+                slowButton = 0.5;
+            else if (gamepad2.right_trigger > 0.0)
+                slowButton = 0.7;
+            else slowButton = 1.0;
+
+            if (-gamepad2.left_stick_y > 0) {
                 Hardware.slider1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Hardware.slider1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Hardware.slider1.setPower(Constant.raiseSlider * slowButton);
                 Hardware.slider1.setPower(Constant.raiseSlider * slowButton);
-                manual = true;
+                preset = false;
             }
             else if (-gamepad2.left_stick_y < 0) {
                 Hardware.slider1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Hardware.slider2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Hardware.slider1.setPower(Constant.lowerSlider * slowButton);
                 Hardware.slider2.setPower(Constant.lowerSlider * slowButton);
-                manual = true;
+                preset = false;
             }
-            else if (manual) {
-                if (Hardware.limitSwitch1.getState())
-                    Hardware.slider1.setPower(Constant.stopSlider);
-                if (Hardware.limitSwitch2.getState())
-                    Hardware.slider2.setPower(Constant.stopSlider);
-                encoderReset(Hardware.slider1, Hardware.limitSwitch1);
-                encoderReset(Hardware.slider2, Hardware.limitSwitch2);
+            else {
                 Hardware.slider1.setPower(0.0);
                 Hardware.slider2.setPower(0.0);
-            }*/
+            }
 
-            encoderReset(Hardware.slider1, Hardware.limitSwitch1);
             encoderReset(Hardware.slider2, Hardware.limitSwitch2);
+            checkToStopSliders();
             stabilizeSliders();
 
             //Claw
@@ -199,60 +229,23 @@ public class TeleOp_Blue extends LinearOpMode {
             }
 
 
-            if (gamepad2.b && rotateDelay.milliseconds() > 200) {
-                if (upsideDown)
-                    Hardware.rotateClaw.setPosition(Constant.verticalCone);
-                else
-                    Hardware.rotateClaw.setPosition(Constant.upsideDownCone);
-                rotateDelay.reset();
-            }
-
-            if (gamepad2.x && angleTime.milliseconds() > 200 && !movingArm) {
+            if (gamepad2.x && angleTime.milliseconds() > 200) {
                 if (!in)
                     clawPos = Constant.in;
                 else
                     clawPos = Constant.out;
                 angleTime.reset();
+                rotate = true;
             }
 
+            if (-gamepad2.right_stick_y > 0.0)
+                clawPos+=0.01;
+            else if (-gamepad2.right_stick_y < -0.0)
+                clawPos-=0.01;
 
-            if (angleTime.seconds() > 0.7)
-                if (vertical)
-                    Hardware.rotateClaw.setPosition(Constant.upsideDownCone);
-                else
-                    Hardware.rotateClaw.setPosition(Constant.verticalCone);
-
-            if (-gamepad2.right_stick_y > 0.5)
-                clawPos+=0.005;
-            else if (-gamepad2.right_stick_y < -0.5)
-                clawPos-=0.005;
-
-            if (Hardware.clawSensor.getDistance(DistanceUnit.CM) < 3 && blue())
+            if (Hardware.clawSensor.getDistance(DistanceUnit.CM) < 3 && blue(Hardware.clawSensor))
                 Hardware.mainClaw.setPosition(Constant.closedClaw);
 
-            //Arm
-            if (-gamepad2.left_stick_y > 0.5){
-                leftPos+=0.002;
-                rightPos-=0.002;
-                if (Hardware.leftArm.getPosition() > Constant.angleUsageThreshold)
-                    clawPos = Constant.dropAngle - Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
-                else clawPos = Constant.out - Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
-                movingArm = false;
-            }
-            if (-gamepad2.left_stick_y < -0.5){
-                leftPos-=0.001;
-                rightPos+=0.001;
-                if (Hardware.leftArm.getPosition() > Constant.angleUsageThreshold)
-                    clawPos = Constant.dropAngle - Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
-                else clawPos = Constant.out - Math.abs(Hardware.leftArm.getPosition() - Constant.leftArmCollect);
-                movingArm = false;
-            }
-
-            if (movingArm)
-                moveArm(position);
-
-            Hardware.leftArm.setPosition(leftPos);
-            Hardware.rightArm.setPosition(rightPos);
             Hardware.inOutAngle.setPosition(clawPos);
 
             if (vibrate1 && matchTime.seconds() > 108) {
@@ -273,43 +266,73 @@ public class TeleOp_Blue extends LinearOpMode {
             telemetry.addData("Lift2:", Hardware.slider2.getCurrentPosition());
             telemetry.addData("Switch1:", Hardware.limitSwitch1.getState());
             telemetry.addData("Switch2:", Hardware.limitSwitch2.getState());
+            telemetry.addData("CLawPos:", clawPos);
             telemetry.update();
         }
     }
 
     public void moveSliders(int position){
-        Hardware.slider1.setTargetPosition(position);
+        preset = true;
         Hardware.slider2.setTargetPosition(position);
-        Hardware.slider1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Hardware.slider2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if (Hardware.slider1.getCurrentPosition() >= Hardware.slider1.getTargetPosition()) {
+        if (Hardware.slider2.getCurrentPosition() >= Hardware.slider2.getTargetPosition()) {
             Hardware.slider1.setPower(Constant.lowerSlider);
             Hardware.slider2.setPower(Constant.lowerSlider);
         }
-        else if (Hardware.slider1.getCurrentPosition() <= Hardware.slider1.getTargetPosition()) {
+        else if (Hardware.slider2.getCurrentPosition() <= Hardware.slider2.getTargetPosition()) {
             Hardware.slider1.setPower(Constant.raiseSlider);
             Hardware.slider2.setPower(Constant.raiseSlider);
+        }
+        clawPos = Constant.dropAngle;
+    }
+
+    public void checkToStopSliders(){
+        if (preset){
+            if (Math.abs(Hardware.slider2.getCurrentPosition() - Hardware.slider2.getTargetPosition()) < 10){
+                Hardware.slider1.setPower(0.0);
+                Hardware.slider2.setPower(0.0);
+                preset = false;
+            }
         }
     }
 
     public void stabilizeSliders(){
-        if (Hardware.slider1.getCurrentPosition() < Hardware.slider1.getTargetPosition() && Math.abs(Hardware.slider1.getCurrentPosition() - Hardware.slider1.getTargetPosition())<10 && Math.abs(Hardware.slider1.getCurrentPosition() - Hardware.slider1.getTargetPosition())>1 && Hardware.slider1.getMode() == DcMotor.RunMode.RUN_TO_POSITION)
+        int target = 0;
+        if (Hardware.slider2.getPower() == 0.0)
+            target = Hardware.slider2.getCurrentPosition();
+        if (Hardware.slider2.getCurrentPosition() < target && Math.abs(Hardware.slider2.getCurrentPosition()-target) > 1 && Math.abs(Hardware.slider2.getCurrentPosition()-target) < 10){
             Hardware.slider1.setPower(Constant.stopSlider);
-        else if (Hardware.slider1.getCurrentPosition() > Hardware.slider1.getTargetPosition() && Math.abs(Hardware.slider1.getCurrentPosition() - Hardware.slider1.getTargetPosition())<10 && Math.abs(Hardware.slider1.getCurrentPosition() - Hardware.slider1.getTargetPosition())>1 && Hardware.slider1.getMode() == DcMotor.RunMode.RUN_TO_POSITION)
-            Hardware.slider1.setPower(-Constant.stopSlider);
-
-        if (Hardware.slider2.getCurrentPosition() < Hardware.slider2.getTargetPosition() && Math.abs(Hardware.slider2.getCurrentPosition() - Hardware.slider2.getTargetPosition())<10 && Math.abs(Hardware.slider2.getCurrentPosition() - Hardware.slider2.getTargetPosition())>1 && Hardware.slider2.getMode() == DcMotor.RunMode.RUN_TO_POSITION)
             Hardware.slider2.setPower(Constant.stopSlider);
-        else if (Hardware.slider2.getCurrentPosition() > Hardware.slider2.getTargetPosition() && Math.abs(Hardware.slider2.getCurrentPosition() - Hardware.slider2.getTargetPosition())<10 && Math.abs(Hardware.slider2.getCurrentPosition() - Hardware.slider2.getTargetPosition())>1 && Hardware.slider2.getMode() == DcMotor.RunMode.RUN_TO_POSITION)
+        }
+        else if (Hardware.slider2.getCurrentPosition() > target && Math.abs(Hardware.slider2.getCurrentPosition()-target) > 1 && Math.abs(Hardware.slider2.getCurrentPosition()-target) < 10){
+            Hardware.slider1.setPower(-Constant.stopSlider);
             Hardware.slider2.setPower(-Constant.stopSlider);
+        }
+    }
 
+    public void stabilizeArm(){
+        int target = 0;
+        if (Hardware.intakeArm.getPower() == 0.0)
+            target = Hardware.intakeArm.getCurrentPosition();
+        if (Hardware.intakeArm.getCurrentPosition() < target && Math.abs(Hardware.intakeArm.getCurrentPosition() - target) > 1 && Hardware.intakeArm.getCurrentPosition() - target < 5)
+            Hardware.intakeArm.setPower(Constant.stopArm);
+        if (Hardware.intakeArm.getCurrentPosition() > target && Math.abs(Hardware.intakeArm.getCurrentPosition() - target) > 1 && Hardware.intakeArm.getCurrentPosition() - target < 5)
+            Hardware.intakeArm.setPower(-Constant.stopArm);
     }
 
     public void encoderReset(DcMotor slider, DigitalChannel limitSwitch){
-        if (slider.getPower() < 0.0 && !limitSwitch.getState()) {
+        if (slider.getPower() < 0.0 && limitSwitch.getState()) {
             slider.setPower(0.0);
             slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lowering = false;
+        }
+    }
+
+    public void encoderResetArm(DcMotor motor, DigitalChannel limitSwitch){
+        if (motor.getPower() < 0.0 && limitSwitch.getState()) {
+            motor.setPower(0.0);
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -321,42 +344,18 @@ public class TeleOp_Blue extends LinearOpMode {
             opClaw = true;
         else opClaw = false;
 
-        if (Math.abs(Hardware.rotateClaw.getPosition() - Constant.verticalCone) < 0.0001)
-            vertical = true;
-        else vertical = false;
-
-        if (Math.abs(Hardware.rotateClaw.getPosition() - Constant.upsideDownCone) < 0.0001)
-            upsideDown = true;
-        else upsideDown = false;
-
         if (Math.abs(Hardware.inOutAngle.getPosition() - Constant.in) < 0.0001)
             in = true;
         else in = false;
     }
 
-    public boolean blue(){
-        if (Math.max(Math.max(Hardware.clawSensor.blue(), Hardware.clawSensor.red()), Hardware.clawSensor.green()) == Hardware.clawSensor.blue())
+    public boolean blue(RevColorSensorV3 clawSensor){
+        if (Math.max(Math.max(clawSensor.blue(), clawSensor.red()), clawSensor.green()) == clawSensor.blue())
             return true;
         else return false;
     }
-    public void moveArm(double position){
-        if (Math.abs(Hardware.leftArm.getPosition() - position) > 0.01){
-            movingArm = true;
-            if (Hardware.leftArm.getPosition() > position){
-                leftPos-=0.03*Math.abs(Hardware.leftArm.getPosition() - position);
-                rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - position);
-            }
-            else {
-                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - position);
-                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - position);
-            }
-        }
-        else movingArm = false;
-        if (position > 0.8)
-            Hardware.rotateClaw.setPosition(Constant.upsideDownCone);
-        else Hardware.rotateClaw.setPosition(Constant.verticalCone);
-        if (position > 0.45)
-            clawPos = Constant.dropAngle + Math.abs(Constant.leftArmCollect - position);
-        else clawPos = Constant.out + Math.abs(Constant.leftArmCollect - position);
+
+    public double ticksToServo(double ticks){
+        return (ticks/Constant.encoderTicksIntake)*5/6;
     }
 }

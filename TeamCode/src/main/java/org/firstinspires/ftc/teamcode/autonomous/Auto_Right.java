@@ -242,7 +242,7 @@ public class Auto_Right extends LinearOpMode {
 
                 case preLoad:
                     moveArm(Constant.leftArmDrop);
-                    if(drive.isBusy())
+                    if (drive.isBusy())
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.openClaw);

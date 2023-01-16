@@ -2,9 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 public class Constant {
 
-    public static final double encoderTicksIntake = 288.0;
     public static final double openClaw = 0.6;
-    public static final double closedClaw = 0.78;
+    public static final double closedClaw = 1.0;
 
     public static final double leftArmCone1 = 0.5;
     public static final double leftArmCone2 = 0.5;
@@ -24,10 +23,7 @@ public class Constant {
     public static final double rightArmDropBack = 0.0;
     public static final double leftArmCollect = 0.14;
     public static final double rightArmCollect = 0.86;
-    public static final double intakeStraight = 0.86;
-    public static final int angleUsageThreshold = 0;
-
-    public static final double stopArm = 0.0;
+    public static final double angleUsageThreshold = 0.45;
 
 
     public static final double openIntake = 0.42;
@@ -38,14 +34,11 @@ public class Constant {
 
     public static final double intakeCollect = 0.0;
     public static final double intakeIn = 0.0;
-    public static final double intakeDown = 0.0;
-    public static final double intakeInit = 0.0;
 
 
     public static final double intakeStart = 0.0;
 
-    public static final double dropAngle = 0.57;
-    public static final double dropAngleHigh = 0.66;
+    public static final double dropAngle = 0.55;
     public static final double in = 1.0;
     public static final double out = 0.35;
 
@@ -55,11 +48,11 @@ public class Constant {
     public static final double raiseSlider = 1.0;
     public static final double lowerSlider = -1.0;
     public static final double stopSlider = 0.003;
-    public static final int high = 1047;
+    public static final int high = 1380;
     public static final int highBack = 1380;
-    public static final int mid = 700;
+    public static final int mid = 990;
     public static final int midBack = 990;
-    public static final int low = 400;
+    public static final int low = 626;
     public static final int bottom = 0;
     public static final int collect = 0;
     public static final int collectIn = 0;

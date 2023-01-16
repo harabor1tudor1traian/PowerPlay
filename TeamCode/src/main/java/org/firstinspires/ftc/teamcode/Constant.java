@@ -71,4 +71,14 @@ public class Constant {
     public static double ticksPerRev = 537.7;
     public static final double wheelDiameter = 9.6;
 
+    public static final double potentiometerMaxVoltage = 5.0;
+    public static final double potentiometerMaxDegrees = 270.0;
+
+    public static final double armPower = 0.3;
+    public static final double stabilizeArm = 0.003;
+    public static final double armInit = 0.0;
+    public static final double armPickUpCone = 0.0;
+    public static final double armDropCone = 0.0;
+    public static final double armDroppedCone = 0.0;
+
 }

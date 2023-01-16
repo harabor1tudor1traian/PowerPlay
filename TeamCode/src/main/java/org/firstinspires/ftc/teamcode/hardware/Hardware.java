@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -21,12 +22,11 @@ public class Hardware {
     public static DcMotorEx motorBr;
     public static DcMotorEx motorFr;
     public static DcMotorEx intakeArm;
-
+    public static DcMotorEx slider1;
+    public static DcMotorEx slider2;
     public static DcMotorEx leftEncoder;
     public static DcMotorEx rightEncoder;
     public static DcMotorEx frontEncoder;
-    public static DcMotorEx slider1;
-    public static DcMotorEx slider2;
 
     public static Servo intakeClaw;
     public static Servo moveIntake;
@@ -44,6 +44,7 @@ public class Hardware {
     public static DigitalChannel limitSwitch2;
     public static DigitalChannel limitSwitchArm;
 
+    public static AnalogInput potentiometer;
     HardwareMap hwMap =  null;
 
     public Hardware(){
@@ -75,7 +76,7 @@ public class Hardware {
         motorFr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slider1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slider2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intakeArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -119,5 +120,7 @@ public class Hardware {
         limitSwitch1 = hwMap.get(DigitalChannel.class, "limitSwitch1");
         limitSwitch2 = hwMap.get(DigitalChannel.class, "limitSwitch2");
         limitSwitchArm = hwMap.get(DigitalChannel.class, "limitSwitchArm");
+
+        potentiometer = hwMap.get(AnalogInput.class, "potentiometer");
     }
 }

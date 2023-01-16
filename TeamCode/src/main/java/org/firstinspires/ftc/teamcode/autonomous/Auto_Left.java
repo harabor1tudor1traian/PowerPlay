@@ -717,27 +717,7 @@ public class Auto_Left extends LinearOpMode {
         robot.motorBr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorFr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
-    public void moveArm(double position){
-        if (Math.abs(Hardware.leftArm.getPosition() - position) > 0.01){
-            movingArm = true;
-            if (Hardware.leftArm.getPosition() > position){
-                leftPos-=0.03*Math.abs(Hardware.leftArm.getPosition() - position);
-                rightPos+=0.03*Math.abs(Hardware.leftArm.getPosition() - position);
-            }
-            else {
-                leftPos+=0.02*Math.abs(Hardware.leftArm.getPosition() - position);
-                rightPos-=0.02*Math.abs(Hardware.leftArm.getPosition() - position);
-            }
-        }
-        else movingArm = false;
-        if (position > 0.8)
-            Hardware.rotateClaw.setPosition(Constant.upsideDownCone);
-        else Hardware.rotateClaw.setPosition(Constant.verticalCone);
-        if (position > 0.45)
-            clawPos = Constant.dropAngle + Math.abs(Constant.leftArmCollect - position);
-        else clawPos = Constant.out + Math.abs(Constant.leftArmCollect - position);
-    }
+    
 
 
 

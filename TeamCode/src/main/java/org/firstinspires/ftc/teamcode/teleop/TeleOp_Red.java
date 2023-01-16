@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Constant;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
@@ -54,6 +55,7 @@ public class TeleOp_Red extends LinearOpMode {
     double intakePos = Constant.intakeIn;
     double intakeClawPos = Constant.intakeInit;
     double intakeTarget = Constant.intakeIn;
+    double armPosition = Constant.armInit;
 
     double brake = 1.0;
 
@@ -112,6 +114,7 @@ public class TeleOp_Red extends LinearOpMode {
             telemetry.addData("Main:", Hardware.mainClaw.getPosition());
             telemetry.addData("arm", Hardware.intakeArm.getCurrentPosition());
 
+            //Intake sliders
             if (gamepad1.dpad_left)
                 intakePos+=0.001;
             if (gamepad1.dpad_right)
@@ -121,19 +124,22 @@ public class TeleOp_Red extends LinearOpMode {
             if (gamepad1.left_bumper)
                 intakePos = intakeTarget;
 
+            //Arm Manual
             if (gamepad1.dpad_down)
-                Hardware.intakeArm.setPower(0.3);
+                armPosition+=0.01;
             else if (gamepad1.dpad_up)
-                Hardware.intakeArm.setPower(-0.3);
-            else if (manual)
-                Hardware.intakeArm.setPower(0.0);
+                armPosition-=0.01;
 
-            stabilizeArm();
-            encoderResetArm(Hardware.intakeArm, Hardware.limitSwitchArm);
+            //Arm Presets
+            if (gamepad1.b)
+                armPosition = Constant.armDropCone;
+            if (gamepad1.x)
+                armPosition = Constant.armPickUpCone;
 
             if (gamepad1.y && intakeDownTime.seconds() > 0.2) {
                 if (!down) {
                     intakeClawPos = Constant.intakeDown;
+                    armPosition = Constant.armDroppedCone;
                     down = true;
                 } else if (down)
                     down = false;
@@ -158,6 +164,7 @@ public class TeleOp_Red extends LinearOpMode {
 
             Hardware.intake.setPosition(intakePos);
             Hardware.moveIntake.setPosition(intakeClawPos);
+            moveArm(armPosition);
 
 
             //GAMEPAD 2
@@ -248,24 +255,11 @@ public class TeleOp_Red extends LinearOpMode {
 
             Hardware.inOutAngle.setPosition(clawPos);
 
-            if (vibrate1 && matchTime.seconds() > 108) {
-                gamepad1.rumble(1000);
-                vibrate1 = !vibrate1;
-            }
-
-            if (vibrate2 && matchTime.seconds() > 113) {
-                gamepad1.rumble(1000);
-                vibrate2 = !vibrate2;
-            }
-            if (vibrate3 && matchTime.seconds() > 118) {
-                gamepad1.rumble(1000);
-                vibrate3 = !vibrate3;
-            }
-
             telemetry.addData("Lift1:", Hardware.slider1.getCurrentPosition());
             telemetry.addData("Lift2:", Hardware.slider2.getCurrentPosition());
             telemetry.addData("Switch1:", Hardware.limitSwitch1.getState());
             telemetry.addData("Switch2:", Hardware.limitSwitch2.getState());
+            telemetry.addData("Arm Degrees:", voltageToDegrees(Hardware.potentiometer.getVoltage()));
             telemetry.addData("CLawPos:", clawPos);
             telemetry.update();
         }
@@ -283,6 +277,35 @@ public class TeleOp_Red extends LinearOpMode {
             Hardware.slider2.setPower(Constant.raiseSlider);
         }
         clawPos = Constant.dropAngle;
+    }
+
+    public double voltageToDegrees(double voltage){
+        return (voltage * Constant.potentiometerMaxDegrees)/Constant.potentiometerMaxVoltage;
+    }
+
+    public double degreesToVoltage(double degrees){
+        return (degrees * Constant.potentiometerMaxVoltage)/Constant.potentiometerMaxDegrees;
+    }
+
+    public double voltageToServo(double voltage){
+        return voltageToDegrees(voltage)/300.0;
+    }
+
+    public double degreesToServo(double degrees){
+        return degrees/300;
+    }
+
+    public void moveArm(double position) {
+        if (Math.abs(voltageToDegrees(Hardware.potentiometer.getVoltage()) - position) > 3)
+            if (voltageToDegrees(Hardware.potentiometer.getVoltage()) > position)
+                Hardware.intakeArm.setPower(-Constant.armPower * (voltageToDegrees(Hardware.potentiometer.getVoltage()) / position));
+            else if (voltageToDegrees(Hardware.potentiometer.getVoltage()) < position)
+                Hardware.intakeArm.setPower(Constant.armPower * (voltageToDegrees(Hardware.potentiometer.getVoltage()) / position));
+        else
+            if (voltageToDegrees(Hardware.potentiometer.getVoltage()) > position)
+                Hardware.intakeArm.setPower(-Constant.stabilizeArm);
+            else if (voltageToDegrees(Hardware.potentiometer.getVoltage()) < position)
+                Hardware.intakeArm.setPower(Constant.stabilizeArm);
     }
 
     public void checkToStopSliders(){
@@ -309,7 +332,7 @@ public class TeleOp_Red extends LinearOpMode {
         }
     }
 
-    public void stabilizeArm(){
+    /*public void stabilizeArm(){
         int target = 0;
         if (Hardware.intakeArm.getPower() == 0.0)
             target = Hardware.intakeArm.getCurrentPosition();
@@ -317,7 +340,7 @@ public class TeleOp_Red extends LinearOpMode {
             Hardware.intakeArm.setPower(Constant.stopArm);
         if (Hardware.intakeArm.getCurrentPosition() > target && Math.abs(Hardware.intakeArm.getCurrentPosition() - target) > 1 && Hardware.intakeArm.getCurrentPosition() - target < 5)
             Hardware.intakeArm.setPower(-Constant.stopArm);
-    }
+    }*/
 
     public void encoderReset(DcMotor slider, DigitalChannel limitSwitch){
         if (slider.getPower() < 0.0 && limitSwitch.getState()) {
@@ -328,13 +351,13 @@ public class TeleOp_Red extends LinearOpMode {
         }
     }
 
-    public void encoderResetArm(DcMotor motor, DigitalChannel limitSwitch){
+    /*public void encoderResetArm(DcMotor motor, DigitalChannel limitSwitch){
         if (motor.getPower() < 0.0 && limitSwitch.getState()) {
             motor.setPower(0.0);
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-    }
+    }*/
 
     public void checkServos(){
         if (Math.abs(Hardware.mainClaw.getPosition() - Constant.closedClaw) < 0.0001)

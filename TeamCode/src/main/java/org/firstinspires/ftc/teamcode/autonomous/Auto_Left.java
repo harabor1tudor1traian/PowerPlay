@@ -30,17 +30,19 @@ public class Auto_Left extends LinearOpMode {
 
     private enum robotStage{
         scan,
+        position1,
+        position2,
         preLoad,
-        stack1,
         cone1,
-        stack2,
+        dropCone1,
         cone2,
-        stack3,
+        dropCone2,
         cone3,
-        stack4,
+        dropCone3,
         cone4,
-        stack5,
+        dropCone4,
         cone5,
+        dropCone5,
         park,
         stopRobot}
     private final static robotStage[] robotStageValues = robotStage.values();
@@ -63,6 +65,7 @@ public class Auto_Left extends LinearOpMode {
     private ElapsedTime autoTimer = new ElapsedTime();
     private ElapsedTime cycleRuntime = new ElapsedTime();
     private ElapsedTime detectionTime = new ElapsedTime();
+    private ElapsedTime clawTime = new ElapsedTime();
     private Constant ct = new Constant();
     private int parkZone = 2;
     boolean movingArm = false;
@@ -70,6 +73,10 @@ public class Auto_Left extends LinearOpMode {
     boolean cycle4 = false;
     boolean cycle5 = false;
     boolean tagFound = false;
+    boolean movingSliders = false;
+    boolean dropping = true;
+    boolean lowering1 = false;
+    boolean lowering2 = false;
     double cycleTime;
 
     double leftPos = Constant.leftArmCollect;
@@ -133,53 +140,18 @@ public class Auto_Left extends LinearOpMode {
         telemetry.addData("Status", "Resetting Encoders");
         telemetry.update();
         resetEncoders();
-        Trajectory preLoad;
-        TrajectorySequence stack1;
-        Trajectory cone1;
-        Trajectory stack2;
-        Trajectory cone2;
-        Trajectory stack3;
-        Trajectory cone3;
-        Trajectory stack4;
-        Trajectory cone4;
-        Trajectory stack5;
-        Trajectory cone5;
+        Trajectory position1, position2;
         Trajectory park = null;
 
-        preLoad = drive.trajectoryBuilder(new Pose2d(), false)
-                .splineTo(new Vector2d(-81,81), Math.toRadians(45))
+        position1 = drive.trajectoryBuilder(new Pose2d(), true)
+                .lineToConstantHeading(new Vector2d(toInches(-96), toInches(-40)))
                 .build();
-        stack1 = drive.trajectorySequenceBuilder(new Pose2d())
-                .turn(60)
-                .splineTo(new Vector2d(-120,-30), Math.toRadians(180))
+
+        position2 = drive.trajectoryBuilder(new Pose2d(), false)
+                .splineTo(new Vector2d(toInches(-83),toInches(-50)), -0.19)
                 .build();
-        cone1 = drive.trajectoryBuilder(new Pose2d(), true)
-                .splineTo(new Vector2d(-81,-39), Math.toRadians(135))
-                .build();
-        stack2 = drive.trajectoryBuilder(new Pose2d(), false)
-                .splineTo(new Vector2d(-120,-30), Math.toRadians(180))
-                .build();
-        cone2 = drive.trajectoryBuilder(new Pose2d(), true)
-                .splineTo(new Vector2d(-81,-39), Math.toRadians(135))
-                .build();
-        stack3 = drive.trajectoryBuilder(new Pose2d(), false)
-                .splineTo(new Vector2d(-120,-30), Math.toRadians(180))
-                .build();
-        cone3 = drive.trajectoryBuilder(new Pose2d(), true)
-                .splineTo(new Vector2d(-81,-39), Math.toRadians(135))
-                .build();
-        stack4 = drive.trajectoryBuilder(new Pose2d(), false)
-                .splineTo(new Vector2d(-120,-30), Math.toRadians(180))
-                .build();
-        cone4 = drive.trajectoryBuilder(new Pose2d(), true)
-                .splineTo(new Vector2d(-81,-39), Math.toRadians(135))
-                .build();
-        stack5 = drive.trajectoryBuilder(new Pose2d(), false)
-                .splineTo(new Vector2d(-120,-30), Math.toRadians(180))
-                .build();
-        cone5 = drive.trajectoryBuilder(new Pose2d(), true)
-                .splineTo(new Vector2d(-81,-39), Math.toRadians(135))
-                .build();
+
+
 
         telemetry.addData("Path0", "Starting at %7d :%7d :%7d :%7d",
                 robot.motorFl.getCurrentPosition(),
@@ -192,6 +164,11 @@ public class Auto_Left extends LinearOpMode {
         detectionTime.reset();
 
         while (opModeIsActive()){
+
+            if (!lowering1 && !lowering2) {
+                stabilizeSliders();
+                checkToStopSliders();
+            }
             telemetry.addData("ParkZone:", parkZone);
             telemetry.addData("Stage:", programstage);
             telemetry.update();
@@ -237,168 +214,171 @@ public class Auto_Left extends LinearOpMode {
                                 .splineTo(new Vector2d(-30, -30), Math.toRadians(90))
                                 .build();
                     programstage = nextStage();
-                    drive.followTrajectoryAsync(preLoad);
+                    drive.followTrajectoryAsync(position1);
                     break;
-
-                case preLoad:
-                    moveArm(Constant.leftArmDrop);
+                case position1:
+                    if (drive.isBusy())
+                        programstage = thisStage();
+                    else{
+                        drive.followTrajectoryAsync(position2);
+                        programstage = nextStage();
+                    }
+                    break;
+                case position2:
+                    moveSliders(Constant.mid);
                     if (drive.isBusy())
                         programstage = thisStage();
                     else {
-                        Hardware.mainClaw.setPosition(Constant.openClaw);
-                        sleep(500);
                         programstage = nextStage();
-                        drive.followTrajectorySequenceAsync(stack1);
                     }
                     break;
-
-                case stack1:
-                    moveArm(Constant.leftArmCone1);
-                    if (drive.isBusy() || movingArm)
+                case preLoad:
+                    moveArm(Constant.stackCone1);
+                    Hardware.intake.setPosition(Constant.autonomousStack);
+                    Hardware.mainClaw.setPosition(Constant.openClaw);
+                    if (dropping) {
+                        clawTime.reset();
+                        dropping = false;
+                    }
+                    if (movingArm)
                         programstage = thisStage();
-                    else {
-                        Hardware.mainClaw.setPosition(Constant.closedClaw);
+                    else if (clawTime.seconds() > 0.5 && !dropping){
+                        Hardware.intakeClaw.setPosition(Constant.closedClaw);
                         sleep(500);
                         programstage = nextStage();
-                        drive.followTrajectoryAsync(cone1);
                     }
                     break;
 
                 case cone1:
-                    moveArm(Constant.leftArmDropBack);
-                    if (drive.isBusy() || movingArm)
+                    lowerSliders();
+                    Hardware.intake.setPosition(Constant.retract);
+                    moveArm(Constant.armIn);
+                    if (movingArm)
+                        programstage = thisStage();
+                    else {
+                        Hardware.intakeClaw.setPosition(Constant.openIntake);
+                        sleep(500);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
+                        programstage = nextStage();
+                    }
+                    break;
+                case dropCone1:
+                    moveArm(Constant.stackCone2);
+                    Hardware.intake.setPosition(Constant.autonomousStack);
+                    moveSliders(Constant.mid);
+                    if (movingArm || movingSliders)
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.openClaw);
                         sleep(500);
+                        Hardware.intakeClaw.setPosition(Constant.closedIntake);
                         programstage = nextStage();
-                        drive.followTrajectoryAsync(stack2);
-                    }
-                    break;
-                case stack2:
-                    if (cycleTimer)
-                        cycleRuntime.reset();
-                    moveArm(Constant.leftArmCone2);
-                    if (drive.isBusy() || movingArm)
-                        programstage = thisStage();
-                    else {
-                        Hardware.mainClaw.setPosition(Constant.closedClaw);
-                        sleep(500);
-                        programstage = nextStage();
-                        drive.followTrajectoryAsync(cone2);
                     }
                     break;
                 case cone2:
-                    moveArm(Constant.leftArmDropBack);
-                    if (drive.isBusy() || movingArm)
+                    lowerSliders();
+                    Hardware.intake.setPosition(Constant.retract);
+                    moveArm(Constant.armIn);
+                    if (movingArm)
+                        programstage = thisStage();
+                    else {
+                        Hardware.intakeClaw.setPosition(Constant.openIntake);
+                        sleep(500);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
+                        programstage = nextStage();
+                    }
+                    break;
+                case dropCone2:
+                    moveArm(Constant.stackCone3);
+                    Hardware.intake.setPosition(Constant.autonomousStack);
+                    moveSliders(Constant.mid);
+                    if (movingArm || movingSliders)
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.openClaw);
                         sleep(500);
+                        Hardware.intakeClaw.setPosition(Constant.closedIntake);
                         programstage = nextStage();
-                        drive.followTrajectoryAsync(stack3);
-                    }
-                    break;
-                case stack3:
-                    cycleTime = cycleRuntime.seconds();
-                    moveArm(Constant.leftArmCone3);
-                    if (drive.isBusy() || movingArm)
-                        programstage = thisStage();
-                    else {
-                        Hardware.mainClaw.setPosition(Constant.closedClaw);
-                        sleep(500);
-                        programstage = nextStage();
-                        drive.followTrajectoryAsync(cone3);
                     }
                     break;
                 case cone3:
-                    moveArm(Constant.leftArmDropBack);
-                    if (drive.isBusy() || movingArm)
+                    lowerSliders();
+                    Hardware.intake.setPosition(Constant.retract);
+                    moveArm(Constant.armIn);
+                    if (movingArm)
+                        programstage = thisStage();
+                    else {
+                        Hardware.intakeClaw.setPosition(Constant.openIntake);
+                        sleep(500);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
+                        programstage = nextStage();
+                    }
+                    break;
+                case dropCone3:
+                    moveArm(Constant.stackCone4);
+                    Hardware.intake.setPosition(Constant.autonomousStack);
+                    moveSliders(Constant.mid);
+                    if (movingArm || movingSliders)
                         programstage = thisStage();
                     else {
                         Hardware.mainClaw.setPosition(Constant.openClaw);
                         sleep(500);
+                        Hardware.intakeClaw.setPosition(Constant.closedIntake);
                         programstage = nextStage();
                     }
                     break;
-                case stack4:
-                    if (cycleTime + 3 < 30 - autoTimer.seconds() && !cycle4) {
-                        cycle4 = true;
-                        drive.followTrajectoryAsync(stack4);
-                    }
-                    if (cycle4){
-                        moveArm(Constant.leftArmCone4);
-                        if (drive.isBusy() || movingArm)
-                            programstage = thisStage();
-                        else {
-                            Hardware.mainClaw.setPosition(Constant.closedClaw);
-                            sleep(500);
-                            programstage = nextStage();
-                            drive.followTrajectoryAsync(cone4);
-                        }
-                        break;
-                    }
-                    else {
-                        programstage = nextStage();
-                        break;
-                    }
                 case cone4:
-                    if (cycle4) {
-                        moveArm(Constant.leftArmDropBack);
-                        if (drive.isBusy() || movingArm)
-                            programstage = thisStage();
-                        else {
-                            Hardware.mainClaw.setPosition(Constant.openClaw);
-                            sleep(500);
-                            programstage = nextStage();
-                        }
-                        break;
-                    }
-                    else{
-                        programstage = nextStage();
-                        break;
-                    }
-                case stack5:
-                    if (cycleTime + 3 < 30 - autoTimer.seconds() && !cycle5) {
-                        cycle5 = true;
-                        drive.followTrajectoryAsync(stack5);
-                    }
-                        if (cycle5) {
-                        moveArm(Constant.leftArmCone5);
-                        if (drive.isBusy() || movingArm)
-                            programstage = thisStage();
-                        else {
-                            Hardware.mainClaw.setPosition(Constant.closedClaw);
-                            sleep(500);
-                            programstage = nextStage();
-                            drive.followTrajectoryAsync(cone5);
-                        }
-                        break;
-                    }
+                    lowerSliders();
+                    Hardware.intake.setPosition(Constant.retract);
+                    moveArm(Constant.armIn);
+                    if (movingArm)
+                        programstage = thisStage();
                     else {
+                        Hardware.intakeClaw.setPosition(Constant.openIntake);
+                        sleep(500);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
                         programstage = nextStage();
-                        break;
                     }
+                    break;
+                case dropCone4:
+                    moveArm(Constant.stackCone5);
+                    Hardware.intake.setPosition(Constant.autonomousStack);
+                    moveSliders(Constant.mid);
+                    if (movingArm || movingSliders)
+                        programstage = thisStage();
+                    else {
+                        Hardware.mainClaw.setPosition(Constant.openClaw);
+                        sleep(500);
+                        Hardware.intakeClaw.setPosition(Constant.closedIntake);
+                        programstage = nextStage();
+                    }
+                    break;
                 case cone5:
-                    if (cycle5) {
-                        moveArm(Constant.leftArmDropBack);
-                        if (drive.isBusy() || movingArm)
-                            programstage = thisStage();
-                        else {
-                            Hardware.mainClaw.setPosition(Constant.openClaw);
-                            sleep(500);
-                            programstage = nextStage();
-                            drive.followTrajectoryAsync(park);
-                        }
-                        break;
-                    }
+                    lowerSliders();
+                    Hardware.intake.setPosition(Constant.retract);
+                    moveArm(Constant.armIn);
+                    if (movingArm)
+                        programstage = thisStage();
                     else {
+                        Hardware.intakeClaw.setPosition(Constant.openIntake);
+                        sleep(500);
+                        Hardware.mainClaw.setPosition(Constant.closedClaw);
                         programstage = nextStage();
-                        drive.followTrajectoryAsync(park);
-                        break;
                     }
+                    break;
+                case dropCone5:
+                    moveSliders(Constant.mid);
+                    if (movingArm)
+                        programstage = thisStage();
+                    else {
+                        Hardware.mainClaw.setPosition(Constant.openClaw);
+                        sleep(500);
+                        drive.followTrajectoryAsync(park);
+                        programstage = nextStage();
+                    }
+                    break;
                 case park:
-                    moveArm(Constant.collect);
+                    lowerSliders();
                     if (drive.isBusy() || movingArm)
                         programstage = thisStage();
                     else programstage = nextStage();
@@ -717,8 +697,96 @@ public class Auto_Left extends LinearOpMode {
         robot.motorBr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorFr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    
 
+    public double voltageToDegrees(double voltage){
+        return (voltage * Constant.potentiometerMaxDegrees)/Constant.potentiometerMaxVoltage;
+    }
 
+    public double degreesToVoltage(double degrees){
+        return (degrees * Constant.potentiometerMaxVoltage)/Constant.potentiometerMaxDegrees;
+    }
+
+    public double voltageToServo(double voltage){
+        return voltageToDegrees(voltage)/300.0;
+    }
+
+    public double degreesToServo(double degrees){
+        return degrees/300;
+    }
+
+    public void moveArm(double position) {
+        if (Math.abs(voltageToDegrees(Hardware.potentiometer.getVoltage()) - position) > 3)
+            if (voltageToDegrees(Hardware.potentiometer.getVoltage()) > position)
+                Hardware.intakeArm.setPower(-Constant.armPower * (voltageToDegrees(Hardware.potentiometer.getVoltage()) / position));
+            else if (voltageToDegrees(Hardware.potentiometer.getVoltage()) < position)
+                Hardware.intakeArm.setPower(Constant.armPower * (voltageToDegrees(Hardware.potentiometer.getVoltage()) / position));
+            else
+            if (voltageToDegrees(Hardware.potentiometer.getVoltage()) > position)
+                Hardware.intakeArm.setPower(-Constant.stabilizeArm);
+            else if (voltageToDegrees(Hardware.potentiometer.getVoltage()) < position)
+                Hardware.intakeArm.setPower(Constant.stabilizeArm);
+    }
+
+    public static double toInches(double dist){
+        return dist/2.54;
+    }
+
+    public void moveSliders(int position){
+        movingSliders = true;
+        Hardware.slider2.setTargetPosition(position);
+        if (Hardware.slider2.getCurrentPosition() >= Hardware.slider2.getTargetPosition()) {
+            Hardware.slider1.setPower(Constant.lowerSlider);
+            Hardware.slider2.setPower(Constant.lowerSlider);
+        }
+        else if (Hardware.slider2.getCurrentPosition() <= Hardware.slider2.getTargetPosition()) {
+            Hardware.slider1.setPower(Constant.raiseSlider);
+            Hardware.slider2.setPower(Constant.raiseSlider);
+        }
+        clawPos = Constant.dropAngle;
+    }
+
+    public void checkToStopSliders(){
+        if (movingSliders){
+            if (Math.abs(Hardware.slider2.getCurrentPosition() - Hardware.slider2.getTargetPosition()) < 10){
+                Hardware.slider1.setPower(0.0);
+                Hardware.slider2.setPower(0.0);
+                movingSliders = false;
+            }
+        }
+    }
+
+    public void lowerSliders() {
+        if (Hardware.limitSwitch1.getState()) {
+            lowering1 = true;
+            Hardware.slider1.setPower(Constant.lowerSlider);
+        }
+        else {
+            lowering1 = false;
+            Hardware.slider1.setPower(0.0);
+        }
+        if (Hardware.limitSwitch2.getState()) {
+            lowering2 = true;
+            Hardware.slider2.setPower(Constant.lowerSlider);
+        }
+        else {
+            lowering2 = false;
+            Hardware.slider2.setPower(0.0);
+        }
+        Hardware.inOutAngle.setPosition(Constant.in);
+    }
+
+    public void stabilizeSliders(){
+        int target = 0;
+        if (Hardware.slider2.getPower() == 0.0)
+            target = Hardware.slider2.getCurrentPosition();
+        if (Hardware.slider2.getCurrentPosition() < target && Math.abs(Hardware.slider2.getCurrentPosition()-target) > 1 && Math.abs(Hardware.slider2.getCurrentPosition()-target) < 10){
+            Hardware.slider1.setPower(Constant.stopSlider);
+            Hardware.slider2.setPower(Constant.stopSlider);
+        }
+        else if (Hardware.slider2.getCurrentPosition() > target && Math.abs(Hardware.slider2.getCurrentPosition()-target) > 1 && Math.abs(Hardware.slider2.getCurrentPosition()-target) < 10){
+            Hardware.slider1.setPower(-Constant.stopSlider);
+            Hardware.slider2.setPower(-Constant.stopSlider);
+        }
+    }
 
 }

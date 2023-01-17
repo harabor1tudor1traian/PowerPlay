@@ -81,4 +81,14 @@ public class Constant {
     public static final double armDropCone = 0.0;
     public static final double armDroppedCone = 0.0;
 
+    public static final double stackCone1 = 0.0;
+    public static final double stackCone2 = 0.0;
+    public static final double stackCone3 = 0.0;
+    public static final double stackCone4 = 0.0;
+    public static final double stackCone5 = 0.0;
+    public static final double autonomousStack = 0.0;
+
+    public static final double retract = 0.0;
+    public static final double armIn = 0.0;
+
 }

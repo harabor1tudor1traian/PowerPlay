@@ -32,17 +32,11 @@ public class TeleOp_Red extends LinearOpMode {
 
     boolean clClaw = false;
     boolean opClaw = false;
-    boolean vertical = false;
-    boolean upsideDown = false;
     boolean in = false;
-    boolean vibrate1 = true;
-    boolean vibrate2 = true;
-    boolean vibrate3 = true;
     boolean lowering = false;
     boolean rotate = false;
     boolean down = false;
     boolean closed = false;
-    boolean manual = false;
     boolean preset = false;
 
     double Drive = 0.0;
@@ -50,7 +44,6 @@ public class TeleOp_Red extends LinearOpMode {
     double Slide = 0.0;
     double max = 0.0;
     double slowButton = 0.0;
-    double leftPos = Constant.leftArmCollect, rightPos = Constant.rightArmCollect;
     double clawPos = Constant.in;
     double intakePos = Constant.intakeIn;
     double intakeClawPos = Constant.intakeInit;
@@ -332,16 +325,6 @@ public class TeleOp_Red extends LinearOpMode {
         }
     }
 
-    /*public void stabilizeArm(){
-        int target = 0;
-        if (Hardware.intakeArm.getPower() == 0.0)
-            target = Hardware.intakeArm.getCurrentPosition();
-        if (Hardware.intakeArm.getCurrentPosition() < target && Math.abs(Hardware.intakeArm.getCurrentPosition() - target) > 1 && Hardware.intakeArm.getCurrentPosition() - target < 5)
-            Hardware.intakeArm.setPower(Constant.stopArm);
-        if (Hardware.intakeArm.getCurrentPosition() > target && Math.abs(Hardware.intakeArm.getCurrentPosition() - target) > 1 && Hardware.intakeArm.getCurrentPosition() - target < 5)
-            Hardware.intakeArm.setPower(-Constant.stopArm);
-    }*/
-
     public void encoderReset(DcMotor slider, DigitalChannel limitSwitch){
         if (slider.getPower() < 0.0 && limitSwitch.getState()) {
             slider.setPower(0.0);
@@ -351,13 +334,13 @@ public class TeleOp_Red extends LinearOpMode {
         }
     }
 
-    /*public void encoderResetArm(DcMotor motor, DigitalChannel limitSwitch){
+    public void encoderResetArm(DcMotor motor, DigitalChannel limitSwitch){
         if (motor.getPower() < 0.0 && limitSwitch.getState()) {
             motor.setPower(0.0);
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-    }*/
+    }
 
     public void checkServos(){
         if (Math.abs(Hardware.mainClaw.getPosition() - Constant.closedClaw) < 0.0001)

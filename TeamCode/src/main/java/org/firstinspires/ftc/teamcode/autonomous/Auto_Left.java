@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Constant;
@@ -62,25 +63,17 @@ public class Auto_Left extends LinearOpMode {
 
     Hardware robot = new Hardware();
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-    private ElapsedTime autoTimer = new ElapsedTime();
-    private ElapsedTime cycleRuntime = new ElapsedTime();
     private ElapsedTime detectionTime = new ElapsedTime();
     private ElapsedTime clawTime = new ElapsedTime();
     private Constant ct = new Constant();
     private int parkZone = 2;
     boolean movingArm = false;
-    boolean cycleTimer = true;
-    boolean cycle4 = false;
-    boolean cycle5 = false;
     boolean tagFound = false;
     boolean movingSliders = false;
     boolean dropping = true;
     boolean lowering1 = false;
     boolean lowering2 = false;
-    double cycleTime;
 
-    double leftPos = Constant.leftArmCollect;
-    double rightPos = Constant.rightArmCollect;
     double clawPos = Constant.collect;
 
     OpenCvCamera camera;
@@ -169,6 +162,7 @@ public class Auto_Left extends LinearOpMode {
                 stabilizeSliders();
                 checkToStopSliders();
             }
+            Hardware.inOutAngle.setPosition(clawPos);
             telemetry.addData("ParkZone:", parkZone);
             telemetry.addData("Stage:", programstage);
             telemetry.update();
@@ -772,7 +766,7 @@ public class Auto_Left extends LinearOpMode {
             lowering2 = false;
             Hardware.slider2.setPower(0.0);
         }
-        Hardware.inOutAngle.setPosition(Constant.in);
+        clawPos = Constant.in;
     }
 
     public void stabilizeSliders(){
